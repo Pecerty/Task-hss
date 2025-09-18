@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Hss – Utente</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    .task { border: 1px solid #ccc; padding: 10px; margin-top: 10px; border-radius: 5px; }
+    .high { border-left: 5px solid red; }
+    .medium { border-left: 5px solid orange; }
+    .low { border-left: 5px solid green; }
+    .completed { opacity: 0.5; text-decoration: line-through; }
+    nav { margin-bottom: 20px; }
+    nav a { margin-right: 10px; text-decoration: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">🏠 Tutti</a>
+    <a href="/utente/mary">Mary</a>
+    <a href="/utente/giovanni">Giovanni</a>
+    <a href="/utente/peppe">Peppe</a>
+    <a href="/utente/cristina">Cristina</a>
+    <a href="/utente/edoardo">Edoardo</a>
+    <a href="/utente/manutentore">Manutentore</a>
+    <a href="/utente/vittoria">Vittoria</a>
+  </nav>
+
+  <h1>🧹 Task assegnati</h1>
+  <div id="tasks"></div>
+
+  <script>
+    async function loadUserTasks() {
+      const pathParts = window.location.pathname.split('/');
+      const user = pathParts[pathParts.length - 1];
+      const res = await fetch('/api/tasks/' + user);
+      const tasks = await res.json();
+      const container = document.getElementById('tasks');
+      container.innerHTML = '';
+      tasks.forEach(task => {
+        const div = document.createElement('div');
+        div.className = 'task ' + task.priority + (task.completed ? ' completed' : '');
+        div.innerHTML = `
+          <strong>${task.description}</strong><br>
+          📅 ${task.date || '—'}<br>
+          👤 ${task.assignedTo || '—'}<br>
+          🔵 Priorità: ${task.priority}`;
+        container.appendChild(div);
+      });
+    }
+
+    loadUserTasks();
+  </script>
+</body>
+</html>

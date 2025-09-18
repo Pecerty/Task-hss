@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Hss – Tutti</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    input, select, button { margin: 5px 0; padding: 8px; width: 100%; }
+    .task { border: 1px solid #ccc; padding: 10px; margin-top: 10px; border-radius: 5px; }
+    .high { border-left: 5px solid red; }
+    .medium { border-left: 5px solid orange; }
+    .low { border-left: 5px solid green; }
+    .completed { opacity: 0.5; text-decoration: line-through; }
+    nav { margin-bottom: 20px; }
+    nav a { margin-right: 10px; text-decoration: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">🏠 Tutti</a>
+    <a href="/utente/mary">Mary</a>
+    <a href="/utente/giovanni">Giovanni</a>
+    <a href="/utente/peppe">Peppe</a>
+    <a href="/utente/cristina">Cristina</a>
+    <a href="/utente/edoardo">Edoardo</a>
+    <a href="/utente/manutentore">Manutentore</a>
+    <a href="/utente/vittoria">Vittoria</a>
+  </nav>
+
+  <h1>🧹 Task Hss – Tutti</h1>
+  <input id="desc" type="text" placeholder="Scrivi un'attività..." />
+  <input id="date" type="date" />
+  <select id="assignedTo">
+    <option value="">— Assegna a —</option>
+    <option>Mary</option>
+    <option>Giovanni</option>
+    <option>Peppe</option>
+    <option>Cristina</option>
+    <option>Edoardo</option>
+    <option>Manutentore</option>
+    <option>Vittoria</option>
+  </select>
+  <select id="priority">
+    <option value="high">Alta</option>
+    <option value="medium">Media</option>
+    <option value="low">Bassa</option>
+  </select>
+  <button onclick="addTask()">Aggiungi</button>
+
+  <div id="tasks"></div>
+
+  <script>
+    async function loadTasks() {
+      const res = await fetch('/api/tasks');
+      const tasks = await res.json();
+      renderTasks(tasks);
+    }
+
+    function renderTasks(tasks) {
+      const container = document.getElementById('tasks');
+      container.innerHTML = '';
+      tasks.forEach(task => {
+        const div = document.createElement('div');
+        div.className = 'task ' + task.priority + (task.completed ? ' completed' : '');
+        div.innerHTML = `
+          <strong>${task.description}</strong><br>
+          📅 ${task.date || '—'}<br>
+          👤 ${task.assignedTo || '—'}<br>
+          🔵 Priorità: ${task.priority}<br>
+          ${!task.completed ? `<button onclick="completeTask('${task.id}')">✅ Fatto</button>` : ''}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function addTask() {
+      const desc = document.getElementById('desc').value;
+      const date = document.getElementById('date').value;
+      const assignedTo = document.getElementById('assignedTo').value;
+      const priority = document.getElementById('priority').value;
+      if (!desc) return alert('Scrivi qualcosa');
+      await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: Date.now().toString(),
+          description: desc,
+          date,
+          assignedTo,
+          priority,
+          completed: false
+        })
+      });
+      document.getElementById('desc').value = '';
+      document.getElementById('date').value = '';
+      document.getElementById('assignedTo').value = '';
+      loadTasks();
+    }
+
+    async function completeTask(id) {
+      await fetch('/api/tasks/' + id, { method: 'DELETE' });
+      loadTasks();
+    }
+
+    loadTasks();
+  </script>
+</body>
+</html>
