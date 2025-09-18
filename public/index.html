@@ -2,20 +2,68 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hss Team</title>
-  <link rel="manifest" href="manifest.json">
+  <style>
+    body { font-family: sans-serif; margin: 2rem; }
+    nav a { margin-right: 1rem; }
+    .done { text-decoration: line-through; color: #888; }
+  </style>
 </head>
 <body>
-  <h1>Benvenuto in Hss Team</h1>
-  <p>App pronta senza logo. Funzionalità PWA attiva.</p>
+  <h1>Hss Team</h1>
+  <nav>
+    <a href="/user.html?utente=Mary">Mary</a>
+    <a href="/user.html?utente=Giovanni">Giovanni</a>
+    <a href="/user.html?utente=Peppe">Peppe</a>
+    <a href="/user.html?utente=Cristina">Cristina</a>
+    <a href="/user.html?utente=Edoardo">Edoardo</a>
+    <a href="/user.html?utente=Manutentore">Manutentore</a>
+    <a href="/user.html?utente=Vittoria">Vittoria</a>
+  </nav>
+  <form id="taskForm">
+    <input name="nome" placeholder="Nome task" required>
+    <select name="priorita">
+      <option value="Alta">Alta</option>
+      <option value="Media">Media</option>
+      <option value="Bassa">Bassa</option>
+    </select>
+    <select name="assegnato">
+      <option>Mary</option><option>Giovanni</option><option>Peppe</option>
+      <option>Cristina</option><option>Edoardo</option><option>Manutentore</option><option>Vittoria</option>
+    </select>
+    <input name="data" type="date" required>
+    <button>Aggiungi</button>
+  </form>
+  <ul id="lista"></ul>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js').then(() => {
-        console.log("Service Worker registrato");
+    async function carica() {
+      const r = await fetch('/api/tasks');
+      const tasks = await r.json();
+      const ul = document.getElementById('lista');
+      ul.innerHTML = "";
+      tasks.forEach(t => {
+        const li = document.createElement("li");
+        li.innerHTML = `<b>${t.nome}</b> – ${t.priorita} – <i>${t.assegnato}</i> – ${t.data}` + (t.fatto ? " ✅" : "");
+        if(t.fatto) li.classList.add("done");
+        ul.appendChild(li);
       });
     }
+    carica();
+    document.getElementById("taskForm").onsubmit = async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const task = Object.fromEntries(fd.entries());
+      task.fatto = false;
+      await fetch("/api/tasks", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(task)
+      });
+      e.target.reset();
+      carica();
+    };
   </script>
 </body>
 </html>

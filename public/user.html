@@ -1,177 +1,147 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Task Hss – Tutti</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hss Team – Utente</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      max-width: 700px;
-      margin: auto;
-      background-color: #f4f4f4;
-    }
-    nav {
-      background-color: #fff;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    nav a {
-      margin-right: 10px;
-      text-decoration: none;
-      color: #007bff;
-      font-weight: bold;
-    }
-    h1 {
-      margin-bottom: 10px;
-    }
-    input, select, button {
-      margin: 5px 0;
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-    }
-    label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .task {
-      background-color: #fff;
-      border-left: 5px solid #007bff;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .high { border-color: red; }
-    .medium { border-color: orange; }
-    .low { border-color: green; }
-    .completed {
-      opacity: 0.5;
-      text-decoration: line-through;
-    }
-    .google-login {
-      display: inline-block;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 5px;
-      color: #444;
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    body { font-family: sans-serif; margin: 2rem; }
+    nav a { margin-right: 1rem; }
+    .done { text-decoration: line-through; color: #888; }
   </style>
 </head>
 <body>
+  <h1>Pagina personale</h1>
   <nav>
-    <a href="/">🏠 Tutti</a>
-    <a href="/utente/mary">Mary</a>
-    <a href="/utente/giovanni">Giovanni</a>
-    <a href="/utente/peppe">Peppe</a>
-    <a href="/utente/cristina">Cristina</a>
-    <a href="/utente/edoardo">Edoardo</a>
-    <a href="/utente/manutentore">Manutentore</a>
-    <a href="/utente/vittoria">Vittoria</a>
+    <a href="/user.html?utente=Mary">Mary</a>
+    <a href="/user.html?utente=Giovanni">Giovanni</a>
+    <a href="/user.html?utente=Peppe">Peppe</a>
+    <a href="/user.html?utente=Cristina">Cristina</a>
+    <a href="/user.html?utente=Edoardo">Edoardo</a>
+    <a href="/user.html?utente=Manutentore">Manutentore</a>
+    <a href="/user.html?utente=Vittoria">Vittoria</a>
   </nav>
-
-  <a href="/auth/google" class="google-login">🔗 Accedi con Google</a>
-
-  <h1>🧹 Task Hss – Tutti</h1>
-
-  <label for="desc">📌 Descrizione attività</label>
-  <input id="desc" type="text" placeholder="Scrivi un'attività..." />
-
-  <label for="date">📅 Data prevista per il task</label>
-  <input id="date" type="date" />
-
-  <label for="assignedTo">👤 Assegna a:</label>
-  <select id="assignedTo">
-    <option value="">— Seleziona utente —</option>
-    <option>Mary</option>
-    <option>Giovanni</option>
-    <option>Peppe</option>
-    <option>Cristina</option>
-    <option>Edoardo</option>
-    <option>Manutentore</option>
-    <option>Vittoria</option>
-  </select>
-
-  <label for="priority">🔵 Priorità</label>
-  <select id="priority">
-    <option value="high">Alta</option>
-    <option value="medium">Media</option>
-    <option value="low">Bassa</option>
-  </select>
-
-  <button onclick="addTask()">➕ Aggiungi</button>
-
-  <div id="tasks"></div>
-
+  <form id="taskForm">
+    <input name="nome" placeholder="Nome task" required>
+    <select name="priorita">
+      <option value="Alta">Alta</option>
+      <option value="Media">Media</option>
+      <option value="Bassa">Bassa</option>
+    </select>
+    <select name="assegnato">
+      <option>Mary</option><option>Giovanni</option><option>Peppe</option>
+      <option>Cristina</option><option>Edoardo</option><option>Manutentore</option><option>Vittoria</option>
+    </select>
+    <input name="data" type="date" required>
+    <button>Aggiungi</button>
+  </form>
+  <ul id="lista"></ul>
   <script>
-    async function loadTasks() {
-      const res = await fetch('/api/tasks');
-      const tasks = await res.json();
-      renderTasks(tasks);
+    async function carica() {
+      const r = await fetch('/api/tasks');
+      const tasks = await r.json();
+      const ul = document.getElementById('lista');
+      ul.innerHTML = "";
+      tasks.forEach(t => {
+        const li = document.createElement("li");
+        li.innerHTML = `<b>${t.nome}</b> – ${t.priorita} – <i>${t.assegnato}</i> – ${t.data}` + (t.fatto ? " ✅" : "");
+        if(t.fatto) li.classList.add("done");
+        ul.appendChild(li);
+      });
     }
+    
+    const params = new URLSearchParams(location.search);
+    const utente = params.get("utente");
+    carica();
 
-    function renderTasks(tasks) {
-      const container = document.getElementById('tasks');
-      container.innerHTML = '';
-      tasks.forEach(task => {
-        const div = document.createElement('div');
-        div.className = 'task ' + task.priority + (task.completed ? ' completed' : '');
-        div.innerHTML = `
-          <strong>${task.description}</strong><br>
-          📅 ${task.date || '—'}<br>
-          👤 ${task.assignedTo || '—'}<br>
-          🔵 Priorità: ${task.priority}<br>
-          ${!task.completed ? `<button onclick="completeTask('${task.id}')">✅ Fatto</button>` : ''}
-        `;
-        container.appendChild(div);
+    async function carica() {
+      const r = await fetch('/api/tasks');
+      const tasks = await r.json();
+      const ul = document.getElementById('lista');
+      ul.innerHTML = "";
+      tasks.forEach(t => {
+        const visibile = t.assegnato === utente ||
+            (utente === 'Peppe' && (t.assegnato === 'Peppe' || t.assegnato === 'Manutentore' || t.assegnato === 'Vittoria')) ||
+            (utente === 'Giovanni' && (t.assegnato === 'Giovanni' || t.assegnato === 'Vittoria')) ||
+            (utente === 'Cristina' && (t.assegnato === 'Cristina' || t.assegnato === 'Vittoria')) ||
+            (utente === 'Edoardo' && (t.assegnato === 'Edoardo' || t.assegnato === 'Manutentore'));
+        if (!visibile) return;
+        const li = document.createElement("li");
+        li.innerHTML = `<input type="checkbox" ${t.fatto ? "checked" : ""} onchange="fatto('${t.nome}')"> ` +
+                       `<b>${t.nome}</b> – ${t.priorita} – <i>${t.assegnato}</i> – ${t.data}`;
+        if(t.fatto) li.classList.add("done");
+        ul.appendChild(li);
       });
     }
 
-    async function addTask() {
-      const desc = document.getElementById('desc').value;
-      const date = document.getElementById('date').value;
-      const assignedTo = document.getElementById('assignedTo').value;
-      const priority = document.getElementById('priority').value;
-      if (!desc) return alert('Scrivi qualcosa');
-      await fetch('/api/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: Date.now().toString(),
-          description: desc,
-          date,
-          assignedTo,
-          priority,
-          completed: false
-        })
+    async function fatto(nome) {
+      const r = await fetch("/api/tasks");
+      const tasks = await r.json();
+      const idx = tasks.findIndex(t => t.nome === nome);
+      if (idx >= 0) {
+        tasks[idx].fatto = !tasks[idx].fatto;
+        await fetch("/api/overwrite", {
+          method: "POST",
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(tasks)
+        });
+        carica();
+      }
+    }
+
+    document.getElementById("taskForm").onsubmit = async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const task = Object.fromEntries(fd.entries());
+      task.fatto = false;
+      await fetch("/api/tasks", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(task)
       });
-      document.getElementById('desc').value = '';
-      document.getElementById('date').value = '';
-      document.getElementById('assignedTo').value = '';
-      loadTasks();
+      e.target.reset();
+      
+    const params = new URLSearchParams(location.search);
+    const utente = params.get("utente");
+    carica();
+
+    async function carica() {
+      const r = await fetch('/api/tasks');
+      const tasks = await r.json();
+      const ul = document.getElementById('lista');
+      ul.innerHTML = "";
+      tasks.forEach(t => {
+        const visibile = t.assegnato === utente ||
+            (utente === 'Peppe' && (t.assegnato === 'Peppe' || t.assegnato === 'Manutentore' || t.assegnato === 'Vittoria')) ||
+            (utente === 'Giovanni' && (t.assegnato === 'Giovanni' || t.assegnato === 'Vittoria')) ||
+            (utente === 'Cristina' && (t.assegnato === 'Cristina' || t.assegnato === 'Vittoria')) ||
+            (utente === 'Edoardo' && (t.assegnato === 'Edoardo' || t.assegnato === 'Manutentore'));
+        if (!visibile) return;
+        const li = document.createElement("li");
+        li.innerHTML = `<input type="checkbox" ${t.fatto ? "checked" : ""} onchange="fatto('${t.nome}')"> ` +
+                       `<b>${t.nome}</b> – ${t.priorita} – <i>${t.assegnato}</i> – ${t.data}`;
+        if(t.fatto) li.classList.add("done");
+        ul.appendChild(li);
+      });
     }
 
-    async function completeTask(id) {
-      await fetch('/api/tasks/' + id, { method: 'DELETE' });
-      loadTasks();
+    async function fatto(nome) {
+      const r = await fetch("/api/tasks");
+      const tasks = await r.json();
+      const idx = tasks.findIndex(t => t.nome === nome);
+      if (idx >= 0) {
+        tasks[idx].fatto = !tasks[idx].fatto;
+        await fetch("/api/overwrite", {
+          method: "POST",
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(tasks)
+        });
+        carica();
+      }
     }
 
-    loadTasks();
+    };
   </script>
 </body>
 </html>
