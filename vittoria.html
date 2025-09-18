@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Hss Team - Vittoria</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; padding: 0;
+            background: #f8f9fa;
+        }
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        nav a {
+            color: white;
+            margin: 0 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .restore-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        main {
+            padding: 2em;
+        }
+        .completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html">Tutti</a>
+            <a href="mary.html">Mary</a>
+            <a href="giovanni.html">Giovanni</a>
+            <a href="peppe.html">Peppe</a>
+            <a href="cristina.html">Cristina</a>
+            <a href="edoardo.html">Edoardo</a>
+            <a href="manutentore.html">Manutentore</a>
+            <a href="vittoria.html">Vittoria</a>
+        </nav>
+        
+    </header>
+    <main>
+        <h2>Task - Vittoria</h2>
+        <div id="task-list"></div>
+    </main>
+    <script>
+        const currentPage = "vittoria";
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
