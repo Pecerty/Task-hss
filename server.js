@@ -1,64 +1,26 @@
-const express = require('express');
+const express = require("express");
+const fs = require("fs");
 const app = express();
-const fs = require('fs');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const path = require('path');
-const PORT = process.env.PORT || 3000;
+const file = "tasks.json";
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.json());
+app.use(express.static("public"));
 
-const TASKS_FILE = './tasks.json';
-
-function readTasks() {
-  if (!fs.existsSync(TASKS_FILE)) return [];
-  return JSON.parse(fs.readFileSync(TASKS_FILE));
-}
-
-function writeTasks(tasks) {
-  fs.writeFileSync(TASKS_FILE, JSON.stringify(tasks, null, 2));
-}
-
-app.get('/api/tasks', (req, res) => {
-  res.json(readTasks());
+app.get("/api/tasks", (req, res) => {
+  const tasks = JSON.parse(fs.readFileSync(file));
+  res.json(tasks);
 });
 
-app.get('/api/tasks/:user', (req, res) => {
-  const user = req.params.user.toLowerCase();
-  const tasks = readTasks();
-  const additionalView = {
-    giovanni: ['vittoria'],
-    cristina: ['vittoria'],
-    peppe: ['vittoria', 'manutentore'],
-    edoardo: ['manutentore']
-  };
-  const visibleFor = [user];
-  if (additionalView[user]) visibleFor.push(...additionalView[user]);
-  const filtered = tasks.filter(t => visibleFor.includes((t.assignedTo || '').toLowerCase()));
-  res.json(filtered);
-});
-
-app.post('/api/tasks', (req, res) => {
-  const tasks = readTasks();
+app.post("/api/tasks", (req, res) => {
+  const tasks = JSON.parse(fs.readFileSync(file));
   tasks.push(req.body);
-  writeTasks(tasks);
-  res.json({ success: true });
+  fs.writeFileSync(file, JSON.stringify(tasks, null, 2));
+  res.json({ ok: true });
 });
 
-app.delete('/api/tasks/:id', (req, res) => {
-  const tasks = readTasks().map(t =>
-    t.id === req.params.id ? { ...t, completed: true } : t
-  );
-  writeTasks(tasks);
-  res.json({ success: true });
+app.post("/api/overwrite", (req, res) => {
+  fs.writeFileSync(file, JSON.stringify(req.body, null, 2));
+  res.json({ ok: true });
 });
 
-app.get('/utente/:username', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/user.html'));
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(3000, () => console.log("Server attivo su http://localhost:3000"));
