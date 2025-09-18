@@ -1,7 +1,7 @@
 {
   "name": "task-hss",
-  "version": "1.4.0",
-  "description": "Task Hss con UI migliorata e supporto per Google Calendar",
+  "version": "1.4.1",
+  "description": "Task Hss con UI aggiornata",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
