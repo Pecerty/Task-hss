@@ -1,3 +1,4 @@
+const { exec } = require('child_process');
 const express = require('express');
 const app = express();
 const fs = require('fs');
@@ -61,4 +62,15 @@ app.get('/utente/:username', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+app.post('/api/restore', (req, res) => {
+  exec('node restore-from-drive.js', (err, stdout, stderr) => {
+    if (err) {
+      console.error('Errore ripristino:', stderr);
+      res.status(500).send('Errore durante il ripristino');
+    } else {
+      console.log(stdout);
+      res.sendStatus(200);
+    }
+  });
 });
