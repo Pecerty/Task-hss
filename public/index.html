@@ -1,177 +1,21 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Task Hss – Tutti</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      max-width: 700px;
-      margin: auto;
-      background-color: #f4f4f4;
-    }
-    nav {
-      background-color: #fff;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    nav a {
-      margin-right: 10px;
-      text-decoration: none;
-      color: #007bff;
-      font-weight: bold;
-    }
-    h1 {
-      margin-bottom: 10px;
-    }
-    input, select, button {
-      margin: 5px 0;
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-    }
-    label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .task {
-      background-color: #fff;
-      border-left: 5px solid #007bff;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .high { border-color: red; }
-    .medium { border-color: orange; }
-    .low { border-color: green; }
-    .completed {
-      opacity: 0.5;
-      text-decoration: line-through;
-    }
-    .google-login {
-      display: inline-block;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 5px;
-      color: #444;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hss Team</title>
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <nav>
-    <a href="/">🏠 Tutti</a>
-    <a href="/utente/mary">Mary</a>
-    <a href="/utente/giovanni">Giovanni</a>
-    <a href="/utente/peppe">Peppe</a>
-    <a href="/utente/cristina">Cristina</a>
-    <a href="/utente/edoardo">Edoardo</a>
-    <a href="/utente/manutentore">Manutentore</a>
-    <a href="/utente/vittoria">Vittoria</a>
-  </nav>
-
-  <a href="/auth/google" class="google-login">🔗 Accedi con Google</a>
-
-  <h1>🧹 Task Hss – Tutti</h1>
-
-  <label for="desc">📌 Descrizione attività</label>
-  <input id="desc" type="text" placeholder="Scrivi un'attività..." />
-
-  <label for="date">📅 Data prevista per il task</label>
-  <input id="date" type="date" />
-
-  <label for="assignedTo">👤 Assegna a:</label>
-  <select id="assignedTo">
-    <option value="">— Seleziona utente —</option>
-    <option>Mary</option>
-    <option>Giovanni</option>
-    <option>Peppe</option>
-    <option>Cristina</option>
-    <option>Edoardo</option>
-    <option>Manutentore</option>
-    <option>Vittoria</option>
-  </select>
-
-  <label for="priority">🔵 Priorità</label>
-  <select id="priority">
-    <option value="high">Alta</option>
-    <option value="medium">Media</option>
-    <option value="low">Bassa</option>
-  </select>
-
-  <button onclick="addTask()">➕ Aggiungi</button>
-
-  <div id="tasks"></div>
-
+  <h1>Benvenuto in Hss Team</h1>
+  <p>App pronta senza logo. Funzionalità PWA attiva.</p>
   <script>
-    async function loadTasks() {
-      const res = await fetch('/api/tasks');
-      const tasks = await res.json();
-      renderTasks(tasks);
-    }
-
-    function renderTasks(tasks) {
-      const container = document.getElementById('tasks');
-      container.innerHTML = '';
-      tasks.forEach(task => {
-        const div = document.createElement('div');
-        div.className = 'task ' + task.priority + (task.completed ? ' completed' : '');
-        div.innerHTML = `
-          <strong>${task.description}</strong><br>
-          📅 ${task.date || '—'}<br>
-          👤 ${task.assignedTo || '—'}<br>
-          🔵 Priorità: ${task.priority}<br>
-          ${!task.completed ? `<button onclick="completeTask('${task.id}')">✅ Fatto</button>` : ''}
-        `;
-        container.appendChild(div);
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(() => {
+        console.log("Service Worker registrato");
       });
     }
-
-    async function addTask() {
-      const desc = document.getElementById('desc').value;
-      const date = document.getElementById('date').value;
-      const assignedTo = document.getElementById('assignedTo').value;
-      const priority = document.getElementById('priority').value;
-      if (!desc) return alert('Scrivi qualcosa');
-      await fetch('/api/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: Date.now().toString(),
-          description: desc,
-          date,
-          assignedTo,
-          priority,
-          completed: false
-        })
-      });
-      document.getElementById('desc').value = '';
-      document.getElementById('date').value = '';
-      document.getElementById('assignedTo').value = '';
-      loadTasks();
-    }
-
-    async function completeTask(id) {
-      await fetch('/api/tasks/' + id, { method: 'DELETE' });
-      loadTasks();
-    }
-
-    loadTasks();
   </script>
 </body>
 </html>
