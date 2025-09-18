@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Task Hss</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
     input, select, button { margin: 5px 0; padding: 8px; width: 100%; }
     .task { border: 1px solid #ccc; padding: 10px; margin-top: 10px; border-radius: 5px; }
     .high { border-left: 5px solid red; }
@@ -16,6 +16,17 @@
 <body>
   <h1>🧹 Task Hss</h1>
   <input id="desc" type="text" placeholder="Scrivi un'attività..." />
+  <input id="date" type="date" />
+  <select id="assignedTo">
+    <option value="">— Assegna a —</option>
+    <option>Mary</option>
+    <option>Giovanni</option>
+    <option>Peppe</option>
+    <option>Cristina</option>
+    <option>Edoardo</option>
+    <option>Manutentore</option>
+    <option>Vittoria</option>
+  </select>
   <select id="priority">
     <option value="high">Alta</option>
     <option value="medium">Media</option>
@@ -34,23 +45,36 @@
       tasks.forEach(task => {
         const div = document.createElement('div');
         div.className = 'task ' + task.priority;
-        div.innerHTML = `<strong>${task.description}</strong><br>
-                         Priorità: ${task.priority}<br>
-                         <button onclick="deleteTask('${task.id}')">✅ Fatto</button>`;
+        div.innerHTML = `
+          <strong>${task.description}</strong><br>
+          📅 ${task.date || '—'}<br>
+          👤 ${task.assignedTo || 'Non assegnato'}<br>
+          🔵 Priorità: ${task.priority}<br>
+          <button onclick="deleteTask('${task.id}')">✅ Fatto</button>`;
         container.appendChild(div);
       });
     }
 
     async function addTask() {
       const desc = document.getElementById('desc').value;
+      const date = document.getElementById('date').value;
+      const assignedTo = document.getElementById('assignedTo').value;
       const priority = document.getElementById('priority').value;
       if (!desc) return alert('Scrivi qualcosa');
       await fetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: Date.now().toString(), description: desc, priority })
+        body: JSON.stringify({
+          id: Date.now().toString(),
+          description: desc,
+          date,
+          assignedTo,
+          priority
+        })
       });
       document.getElementById('desc').value = '';
+      document.getElementById('date').value = '';
+      document.getElementById('assignedTo').value = '';
       loadTasks();
     }
 
