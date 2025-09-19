@@ -3,39 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Task - Index</title>
+  <title>Hss Team - Nuovo Task</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
-    header { background: #333; color: white; padding: 1em; }
-    nav a { color: white; margin: 0 10px; text-decoration: none; }
-    main { padding: 1em; }
-    .completed { text-decoration: line-through; opacity: 0.5; }
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    form { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
+    input, select, textarea, button { width: 100%; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
+    label { margin-top: 15px; display: block; font-weight: bold; }
+    button { background-color: #4CAF50; color: white; font-size: 16px; border: none; cursor: pointer; }
+    button:hover { background-color: #45a049; }
   </style>
 </head>
 <body>
-<header>
-  <button class="restore-button" onclick="restoreFromBackup()">↺ Ripristina</button>
-  
-<nav>
-  <a href="index.html">Home</a>
-  <a href="cristina.html">Cristina</a>
-  <a href="edoardo.html">Edoardo</a>
-  <a href="giovanni.html">Giovanni</a>
-  <a href="manutentore.html">Manutentore</a>
-  <a href="mary.html">Mary</a>
-  <a href="peppe.html">Peppe</a>
-  <a href="vittoria.html">Vittoria</a>
-  <a href="archivio.html">🗃️ Archivio</a>
-  <a href="lista_mafalda.html">🛒 Spesa Mafalda</a>
-  <a href="lista_vittoria.html">🛒 Spesa Vittoria</a>
-</nav>
+  <form>
+    <h2>Nuovo Task</h2>
+    <label for="titolo">Titolo</label>
+    <input type="text" id="titolo" name="titolo" placeholder="Inserisci il titolo del task" />
 
-</header>
-<main>
-  <h2>Task - Index</h2>
-  <div id="task-list"></div>
-</main>
-<script>const currentPage = "index";</script>
-<script src="app.js"></script>
+    <label for="assegnato">Assegnato a</label>
+    <select id="assegnato" name="assegnato">
+      <option value="Mary">Mary</option>
+      <option value="Giovanni">Giovanni</option>
+      <option value="Peppe">Peppe</option>
+      <option value="Cristina">Cristina</option>
+      <option value="Edoardo">Edoardo</option>
+      <option value="Manutentore">Manutentore</option>
+      <option value="Vittoria">Vittoria</option>
+    </select>
+
+    <label for="data">Data</label>
+    <input type="date" id="data" name="data" placeholder="Seleziona la data" />
+
+    <label for="note">Note</label>
+    <textarea id="note" name="note" placeholder="Note aggiuntive..."></textarea>
+
+    <button type="submit">Salva Task</button>
+  </form>
 </body>
 </html>

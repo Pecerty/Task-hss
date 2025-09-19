@@ -1,38 +1,22 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Archivio Task</title>
   <style>
-    body { font-family: sans-serif; padding: 1em; background: #f9f9f9; }
-    .archived-task {
-      background: white; padding: 1em; margin-bottom: 1em;
-      border-left: 5px solid #777; border-radius: 5px;
-    }
-    @media(max-width: 600px) {
-      .archived-task { font-size: 0.95em; }
-    }
+    body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+    .container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
+    .top-link { display: inline-block; margin-bottom: 10px; color: #333; text-decoration: underline; }
+    .task-done { text-decoration: line-through; color: #999; padding: 8px; border-bottom: 1px solid #ddd; }
   </style>
 </head>
 <body>
-  <h2>🗃️ Archivio Task</h2>
-  <div id="archivio-container"></div>
-  <script>
-    const tasks = JSON.parse(localStorage.getItem("archivio") || "[]");
-    const container = document.getElementById("archivio-container");
-    if (tasks.length === 0) {
-      container.innerHTML = "<p>Nessun task archiviato.</p>";
-    } else {
-      tasks.forEach(t => {
-        const div = document.createElement("div");
-        div.className = "archived-task";
-        div.innerHTML = `<strong>${t.titolo}</strong> – ${t.data} – ${t.priorità}<br>
-                         <em>${t.note || ""}</em><br>
-                         <small>Assegnato a: ${t.assegnatoA}</small>`;
-        container.appendChild(div);
-      });
-    }
-  </script>
+  <div class="container">
+    <a href="index.html" class="top-link">← Torna alla Home</a>
+    <h2>Archivio Task</h2>
+    <div class="task-done">✔️ Pulire il giardino – assegnato a Manutentore – 12/09/2025</div>
+    <div class="task-done">✔️ Comprare bottiglie d'acqua – assegnato a Cristina – 11/09/2025</div>
+  </div>
 </body>
 </html>
