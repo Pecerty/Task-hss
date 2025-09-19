@@ -1,74 +1,142 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mary – Task</title>
+  <title>Mary – Hss Team</title>
   <style>
-    body { font-family: sans-serif; font-size: 14px; background: #f4f4f4; padding: 10px; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 15px; border-radius: 10px; }
-    .task { border-bottom: 1px solid #eee; padding: 8px; }
-    .top-link { display: inline-block; margin-bottom: 10px; font-size: 13px; }
-    .archived { text-decoration: line-through; color: gray; }
-    button { font-size: 13px; padding: 5px 10px; margin-right: 5px; margin-top: 4px; border: none; border-radius: 6px; background-color: #ddd; cursor: pointer; }
-    button:hover { background-color: #bbb; }
-  </style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: sans-serif; background: #f9f9f9; font-size: 14px; }
+  header {
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  header a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  header a:hover {
+    text-decoration: underline;
+  }
+  main {
+    max-width: 600px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+  h2 { text-align: center; }
+  label { display: block; margin-top: 15px; font-weight: bold; }
+  input, select, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  textarea { resize: vertical; min-height: 80px; }
+  button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover { background-color: #45a049; }
+  .checkbox { margin-top: 10px; display: flex; align-items: center; }
+  .checkbox input { width: auto; margin-right: 10px; }
+  .task-item { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin: 8px 0; }
+  .completato { text-decoration: line-through; color: gray; opacity: 0.7; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <a href="index.html" class="top-link">← Torna alla Home</a>
-    <h3>Task visibili da Mary</h3>
+  <header>
+  <a href="index.html">🏠 Home</a>
+<a href="utente_mary.html">Mary</a>
+<a href="utente_giovanni.html">Giovanni</a>
+<a href="utente_peppe.html">Peppe</a>
+<a href="utente_cristina.html">Cristina</a>
+<a href="utente_edoardo.html">Edoardo</a>
+<a href="utente_manutentore.html">Manutentore</a>
+<a href="utente_vittoria.html">Vittoria</a>
+<a href="spesa_mafalda.html">🛒 Mafalda</a>
+<a href="spesa_vittoria.html">🛒 Vittoria</a>
+<a href="archivio.html">📁 Archivio</a>
+</header>
+  <main>
+    <h2>Task Assegnati a Mary</h2>
     <div id="taskList"></div>
-  </div>
+  </main>
 
   <script>
-    const visibili = ["Mary"];
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    const taskList = document.getElementById("taskList");
+
+    function salvaTasks() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
 
     function renderTasks() {
-      taskList.innerHTML = "";
-      tasks.forEach((t, idx) => {
-        if (!visibili.includes(t.assegnato)) return;
-        const div = document.createElement("div");
-        div.className = "task" + (t.archived ? " archived" : "");
-        div.innerHTML = `
-          <strong>${t.titolo}</strong><br>
-          <em>${t.assegnato}</em> • <small>${t.data}</small><br>
-          <small>${t.note}</small><br>
-          <button onclick="editTask(${idx})">✏️</button>
-          <button onclick="deleteTask(${idx})">🗑️</button>
-        `;
-        taskList.appendChild(div);
-      });
+      const container = document.getElementById("taskList");
+      container.innerHTML = "";
+      tasks
+        .filter(t => t.assegnato === "Mary")
+        .sort((a, b) => new Date(b.data) - new Date(a.data))
+        .forEach((t, i) => {
+          const div = document.createElement("div");
+          div.className = "task-item" + (t.fatto ? " completato" : "");
+          div.innerHTML = `
+            <b>$\{t.titolo}</b><br/>
+            Data: $\{t.data}<br/>
+            Note: $\{t.note || "-"}<br/>
+            <button onclick="modifica($\{i})">✏️</button>
+            <button onclick="elimina($\{i})">🗑️</button>
+            <button onclick="completa($\{i})">$\{t.fatto ? "↩️" : "✅"}</button>
+          `;
+          container.appendChild(div);
+        });
     }
 
-    function editTask(i) {
-      const task = tasks[i];
-      const nuovoTitolo = prompt("Modifica titolo", task.titolo);
-      const nuovaData = prompt("Modifica data", task.data);
-      const nuovoAssegnato = prompt("Modifica assegnatario", task.assegnato);
-      const nuoveNote = prompt("Modifica note", task.note);
-      if (nuovoTitolo && nuovaData && nuovoAssegnato) {
-        tasks[i] = {
-          ...task,
-          titolo: nuovoTitolo,
-          data: nuovaData,
-          assegnato: nuovoAssegnato,
-          note: nuoveNote
-        };
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-        renderTasks();
-      }
+    function modifica(i) {
+      const t = tasks[i];
+      const nuovo_titolo = prompt("Modifica titolo", t.titolo);
+      if (nuovo_titolo !== null) t.titolo = nuovo_titolo;
+
+      const nuova_data = prompt("Modifica data", t.data);
+      if (nuova_data !== null) t.data = nuova_data;
+
+      const nuove_note = prompt("Modifica note", t.note);
+      if (nuove_note !== null) t.note = nuove_note;
+
+      const nuovo_ass = prompt("Riassegna a", t.assegnato);
+      if (nuovo_ass !== null) t.assegnato = nuovo_ass;
+
+      salvaTasks();
+      renderTasks();
     }
 
-    function deleteTask(i) {
-      if (confirm("Sei sicuro di voler eliminare questo task?")) {
+    function elimina(i) {
+      if (confirm("Eliminare il task?")) {
         tasks.splice(i, 1);
-        localStorage.setItem("tasks", JSON.stringify(tasks));
+        salvaTasks();
         renderTasks();
       }
+    }
+
+    function completa(i) {
+      tasks[i].fatto = !tasks[i].fatto;
+      salvaTasks();
+      renderTasks();
     }
 
     renderTasks();

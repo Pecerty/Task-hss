@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -6,91 +5,131 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lista Spesa Vittoria</title>
   <style>
-    body { font-family: sans-serif; background: #f0f0f0; padding: 10px; font-size: 14px; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 15px; border-radius: 10px; }
-    input, button { font-size: 14px; padding: 6px 8px; margin: 5px 0; }
-    li { margin: 4px 0; }
-    .barrato { text-decoration: line-through; color: grey; }
-    .acquistati-box { margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px; }
-  </style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: sans-serif; background: #f9f9f9; font-size: 14px; }
+  header {
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  header a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  header a:hover {
+    text-decoration: underline;
+  }
+  main {
+    max-width: 600px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+  h2 { text-align: center; }
+  label { display: block; margin-top: 15px; font-weight: bold; }
+  input, select, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  textarea { resize: vertical; min-height: 80px; }
+  button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover { background-color: #45a049; }
+  .checkbox { margin-top: 10px; display: flex; align-items: center; }
+  .checkbox input { width: auto; margin-right: 10px; }
+  .task-item { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin: 8px 0; }
+  .completato { text-decoration: line-through; color: gray; opacity: 0.7; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <a href="index.html">← Torna alla Home</a>
-    <h3>Lista Spesa – Vittoria</h3>
-    <input type="text" id="itemInput" placeholder="Aggiungi un elemento..." />
-    <button onclick="addItem()">➕ Aggiungi</button>
+  <header>
+  <a href="index.html">🏠 Home</a>
+<a href="utente_mary.html">Mary</a>
+<a href="utente_giovanni.html">Giovanni</a>
+<a href="utente_peppe.html">Peppe</a>
+<a href="utente_cristina.html">Cristina</a>
+<a href="utente_edoardo.html">Edoardo</a>
+<a href="utente_manutentore.html">Manutentore</a>
+<a href="utente_vittoria.html">Vittoria</a>
+<a href="spesa_mafalda.html">🛒 Mafalda</a>
+<a href="spesa_vittoria.html">🛒 Vittoria</a>
+<a href="archivio.html">📁 Archivio</a>
+</header>
+  <main>
+    <h2>Lista Spesa Vittoria</h2>
+    <form id="form">
+      <input type="text" id="item" placeholder="Aggiungi elemento..." required />
+      <button type="submit">Aggiungi</button>
+    </form>
     <ul id="lista"></ul>
-
-    <div class="acquistati-box">
-      <h4>Acquistati (ultimi 3 giorni)</h4>
-      <ul id="acquistati"></ul>
-    </div>
-  </div>
-
+  </main>
   <script>
-    const key = "spesa_vittoria";
-    let items = JSON.parse(localStorage.getItem(key) || "[]");
+    const nomeLista = "spesa_vittoria";
+    const lista = JSON.parse(localStorage.getItem(nomeLista) || "[]").filter(i => {
+      const giorni = 3;
+      const oggi = new Date();
+      const data = new Date(i.data);
+      const diff = (oggi - data) / (1000 * 60 * 60 * 24);
+      return diff <= giorni;
+    });
+    localStorage.setItem(nomeLista, JSON.stringify(lista));
 
     function salva() {
-      localStorage.setItem(key, JSON.stringify(items));
-    }
-
-    function addItem() {
-      const val = document.getElementById("itemInput").value.trim();
-      if (val) {
-        items.push({ testo: val, fatto: false, data: new Date().toISOString() });
-        document.getElementById("itemInput").value = "";
-        salva();
-        render();
-      }
-    }
-
-    function toggleItem(i) {
-      items[i].fatto = !items[i].fatto;
-      items[i].data_fatto = new Date().toISOString();
-      salva();
-      render();
-    }
-
-    function deleteItem(i) {
-      if (confirm("Eliminare questo elemento?")) {
-        items.splice(i, 1);
-        salva();
-        render();
-      }
+      localStorage.setItem(nomeLista, JSON.stringify(lista));
     }
 
     function render() {
-      const lista = document.getElementById("lista");
-      const acc = document.getElementById("acquistati");
-      lista.innerHTML = "";
-      acc.innerHTML = "";
-
-      const oggi = new Date();
-      items = items.filter(it => {
-        if (!it.fatto) return true;
-        const diff = (oggi - new Date(it.data_fatto)) / (1000 * 60 * 60 * 24);
-        return diff <= 3;
-      });
-
-      items.forEach((item, i) => {
+      const ul = document.getElementById("lista");
+      ul.innerHTML = "";
+      lista.forEach((item, i) => {
         const li = document.createElement("li");
-        li.className = item.fatto ? "barrato" : "";
         li.innerHTML = `
-          <input type="checkbox" onclick="toggleItem(${i})" ${item.fatto ? "checked" : ""} />
-          ${item.testo}
-          <button onclick="deleteItem(${i})">🗑️</button>
+          <span style="text-decoration: $\{item.fatto ? 'line-through' : 'none'};">$\{item.testo}</span>
+          <button onclick="toggle($\{i})">✔</button>
+          <button onclick="rimuovi($\{i})">🗑</button>
         `;
-        if (item.fatto) {
-          acc.appendChild(li);
-        } else {
-          lista.appendChild(li);
-        }
+        ul.appendChild(li);
       });
-
-      salva();
     }
+
+    function toggle(i) {
+      lista[i].fatto = !lista[i].fatto;
+      salva(); render();
+    }
+
+    function rimuovi(i) {
+      if (confirm("Rimuovere questo elemento?")) {
+        lista.splice(i, 1);
+        salva(); render();
+      }
+    }
+
+    document.getElementById("form").addEventListener("submit", e => {
+      e.preventDefault();
+      const testo = document.getElementById("item").value;
+      lista.push({ testo, fatto: false, data: new Date() });
+      salva(); render();
+      e.target.reset();
+    });
 
     render();
   </script>

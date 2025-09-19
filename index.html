@@ -2,146 +2,167 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hss Team – Task</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hss Team – Home</title>
   <style>
-    body { font-family: sans-serif; font-size: 13px; background: #f9f9f9; margin: 0; }
-    header { background: #333; color: white; padding: 10px; text-align: center; }
-    nav a { margin: 0 10px; color: white; text-decoration: none; font-weight: bold; }
-    main { padding: 10px; max-width: 800px; margin: auto; background: white; border-radius: 8px; margin-top: 10px; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; }
-    textarea { resize: vertical; min-height: 60px; }
-    button { margin-top: 10px; padding: 10px 20px; border: none; background: #4CAF50; color: white; border-radius: 6px; cursor: pointer; }
-    button:hover { background: #45a049; }
-    .task { border: 1px solid #ddd; padding: 10px; margin-top: 10px; border-radius: 6px; }
-    .archived { text-decoration: line-through; color: grey; background: #f0f0f0; }
-    .actions { margin-top: 5px; }
-  </style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: sans-serif; background: #f9f9f9; font-size: 14px; }
+  header {
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  header a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  header a:hover {
+    text-decoration: underline;
+  }
+  main {
+    max-width: 600px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+  h2 { text-align: center; }
+  label { display: block; margin-top: 15px; font-weight: bold; }
+  input, select, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  textarea { resize: vertical; min-height: 80px; }
+  button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover { background-color: #45a049; }
+  .checkbox { margin-top: 10px; display: flex; align-items: center; }
+  .checkbox input { width: auto; margin-right: 10px; }
+  .task-item { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin: 8px 0; }
+  .completato { text-decoration: line-through; color: gray; opacity: 0.7; }
+</style>
 </head>
 <body>
   <header>
-    <h1>Hss Team</h1>
-    <nav>
-      <a href="index.html">🏠 Home</a>
-      <a href="utente_mary.html">Mary</a>
-      <a href="utente_giovanni.html">Giovanni</a>
-      <a href="utente_peppe.html">Peppe</a>
-      <a href="utente_cristina.html">Cristina</a>
-      <a href="utente_edoardo.html">Edoardo</a>
-      <a href="utente_manutentore.html">Manutentore</a>
-      <a href="utente_vittoria.html">Vittoria</a>
-      <a href="spesa_mafalda.html">🛒 Mafalda</a>
-      <a href="spesa_vittoria.html">🛒 Vittoria</a>
-      <a href="archivio.html">📁 Archivio</a>
-    </nav>
-  </header>
+  <a href="index.html">🏠 Home</a>
+<a href="utente_mary.html">Mary</a>
+<a href="utente_giovanni.html">Giovanni</a>
+<a href="utente_peppe.html">Peppe</a>
+<a href="utente_cristina.html">Cristina</a>
+<a href="utente_edoardo.html">Edoardo</a>
+<a href="utente_manutentore.html">Manutentore</a>
+<a href="utente_vittoria.html">Vittoria</a>
+<a href="spesa_mafalda.html">🛒 Mafalda</a>
+<a href="spesa_vittoria.html">🛒 Vittoria</a>
+<a href="archivio.html">📁 Archivio</a>
+</header>
   <main>
     <h2>Nuovo Task</h2>
     <form id="taskForm">
       <label for="titolo">Titolo</label>
-      <input type="text" id="titolo" required>
+      <input type="text" id="titolo" required />
+
       <label for="assegnato">Assegnato a</label>
-      <select id="assegnato">
-        <option>Mary</option><option>Giovanni</option><option>Peppe</option>
-        <option>Cristina</option><option>Edoardo</option><option>Manutentore</option><option>Vittoria</option>
+      <select id="assegnato" required>
+        <option value="Mary">Mary</option><option value="Giovanni">Giovanni</option><option value="Peppe">Peppe</option><option value="Cristina">Cristina</option><option value="Edoardo">Edoardo</option><option value="Manutentore">Manutentore</option><option value="Vittoria">Vittoria</option>
       </select>
+
       <label for="data">Data</label>
-      <input type="date" id="data" required>
+      <input type="date" id="data" required />
+
       <label for="note">Note</label>
-      <textarea id="note"></textarea>
+      <textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
+
       <button type="submit">Salva Task</button>
     </form>
 
-    <h2>Elenco Task</h2>
+    <h2>Task Attivi</h2>
     <div id="taskList"></div>
-    <button onclick="backupToDrive()">📤 Salva su Drive</button>
-    <button onclick="restoreFromDrive()">📥 Ripristina da Drive</button>
   </main>
 
   <script>
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    const form = document.getElementById('taskForm');
-    const taskList = document.getElementById('taskList');
 
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const titolo = document.getElementById('titolo').value;
-      const assegnato = document.getElementById('assegnato').value;
-      const data = document.getElementById('data').value;
-      const note = document.getElementById('note').value;
-      tasks.push({ titolo, assegnato, data, note, archived: false });
+    function salvaTasks() {
       localStorage.setItem("tasks", JSON.stringify(tasks));
-      form.reset();
-      renderTasks();
-    });
+    }
 
     function renderTasks() {
-      taskList.innerHTML = '';
-      tasks.forEach((task, i) => {
-        const div = document.createElement('div');
-        div.className = 'task' + (task.archived ? ' archived' : '');
-        div.innerHTML = `
-          <strong>${task.titolo}</strong><br>
-          <em>Assegnato a:</em> ${task.assegnato} – <em>${task.data}</em><br>
-          <small>${task.note}</small>
-          <div class="actions">
-            <button onclick="editTask(${i})">✏️ Modifica</button>
-            <button onclick="archiveTask(${i})">🗂️ Archivia</button>
-          </div>
-        `;
-        taskList.appendChild(div);
-      });
+      const container = document.getElementById("taskList");
+      container.innerHTML = "";
+      tasks
+        .sort((a, b) => new Date(b.data) - new Date(a.data))
+        .forEach((t, i) => {
+          const div = document.createElement("div");
+          div.className = "task-item" + (t.fatto ? " completato" : "");
+          div.innerHTML = `
+            <b>$\{t.titolo}</b><br/>
+            Assegnato a: <i>$\{t.assegnato}</i><br/>
+            Data: $\{t.data}<br/>
+            Note: $\{t.note || "-"}<br/>
+            <button onclick="modifica($\{i})">✏️</button>
+            <button onclick="elimina($\{i})">🗑️</button>
+            <button onclick="completa($\{i})">$\{t.fatto ? "↩️ Ripristina" : "✅ Fatto"}</button>
+          `;
+          container.appendChild(div);
+        });
     }
 
-    function editTask(i) {
+    function modifica(i) {
       const t = tasks[i];
-      document.getElementById('titolo').value = t.titolo;
-      document.getElementById('assegnato').value = t.assegnato;
-      document.getElementById('data').value = t.data;
-      document.getElementById('note').value = t.note;
-      tasks.splice(i, 1);
-      localStorage.setItem("tasks", JSON.stringify(tasks));
+      document.getElementById("titolo").value = t.titolo;
+      document.getElementById("assegnato").value = t.assegnato;
+      document.getElementById("data").value = t.data;
+      document.getElementById("note").value = t.note;
+      elimina(i);
+    }
+
+    function elimina(i) {
+      if (confirm("Eliminare il task?")) {
+        tasks.splice(i, 1);
+        salvaTasks();
+        renderTasks();
+      }
+    }
+
+    function completa(i) {
+      tasks[i].fatto = !tasks[i].fatto;
+      salvaTasks();
       renderTasks();
     }
 
-    function archiveTask(i) {
-      tasks[i].archived = true;
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-      renderTasks();
-    }
-
-    function backupToDrive() {
-      const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "tasks_backup.json";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function restoreFromDrive() {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = ".json";
-      input.onchange = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          try {
-            tasks = JSON.parse(event.target.result);
-            localStorage.setItem("tasks", JSON.stringify(tasks));
-            renderTasks();
-            alert("Backup ripristinato con successo.");
-          } catch (e) {
-            alert("Errore nel ripristino del backup.");
-          }
-        };
-        reader.readAsText(file);
+    document.getElementById("taskForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const t = {
+        titolo: document.getElementById("titolo").value,
+        assegnato: document.getElementById("assegnato").value,
+        data: document.getElementById("data").value,
+        note: document.getElementById("note").value,
+        fatto: false
       };
-      input.click();
-    }
+      tasks.push(t);
+      salvaTasks();
+      e.target.reset();
+      renderTasks();
+    });
 
     renderTasks();
   </script>

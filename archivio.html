@@ -1,42 +1,106 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Archivio Task</title>
+  <title>Archivio Task – Hss Team</title>
   <style>
-    body { font-family: sans-serif; font-size: 13px; background: #f4f4f4; padding: 10px; }
-    .container { max-width: 700px; margin: auto; background: white; padding: 10px; border-radius: 12px; }
-    .task { border-bottom: 1px solid #eee; padding: 10px; text-decoration: line-through; color: grey; }
-    .top-link { display: inline-block; margin-bottom: 10px; color: #333; text-decoration: underline; }
-  </style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: sans-serif; background: #f9f9f9; font-size: 14px; }
+  header {
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  header a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  header a:hover {
+    text-decoration: underline;
+  }
+  main {
+    max-width: 600px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+  h2 { text-align: center; }
+  label { display: block; margin-top: 15px; font-weight: bold; }
+  input, select, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  textarea { resize: vertical; min-height: 80px; }
+  button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover { background-color: #45a049; }
+  .checkbox { margin-top: 10px; display: flex; align-items: center; }
+  .checkbox input { width: auto; margin-right: 10px; }
+  .task-item { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin: 8px 0; }
+  .completato { text-decoration: line-through; color: gray; opacity: 0.7; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <a href="index.html" class="top-link">← Torna alla Home</a>
-    <h2>Archivio Task</h2>
+  <header>
+  <a href="index.html">🏠 Home</a>
+<a href="utente_mary.html">Mary</a>
+<a href="utente_giovanni.html">Giovanni</a>
+<a href="utente_peppe.html">Peppe</a>
+<a href="utente_cristina.html">Cristina</a>
+<a href="utente_edoardo.html">Edoardo</a>
+<a href="utente_manutentore.html">Manutentore</a>
+<a href="utente_vittoria.html">Vittoria</a>
+<a href="spesa_mafalda.html">🛒 Mafalda</a>
+<a href="spesa_vittoria.html">🛒 Vittoria</a>
+<a href="archivio.html">📁 Archivio</a>
+</header>
+  <main>
+    <h2>Archivio Task Completati</h2>
     <div id="archivioList"></div>
-  </div>
-
+  </main>
   <script>
-    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    const archivioList = document.getElementById("archivioList");
-    const archiviate = tasks.filter(t => t.archived);
-    if (archiviate.length === 0) {
-      archivioList.innerHTML = "<p>Nessun task archiviato.</p>";
-    } else {
-      archiviate.forEach(t => {
-        const div = document.createElement("div");
-        div.className = "task";
-        div.innerHTML = `
-          <strong>${t.titolo}</strong><br>
-          <em>Assegnato a:</em> ${t.assegnato} – <em>${t.data}</em><br>
-          <small>${t.note}</small>
-        `;
-        archivioList.appendChild(div);
-      });
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+    function renderArchivio() {
+      const container = document.getElementById("archivioList");
+      container.innerHTML = "";
+      tasks
+        .filter(t => t.fatto)
+        .sort((a, b) => new Date(b.data) - new Date(a.data))
+        .forEach(t => {
+          const div = document.createElement("div");
+          div.className = "task-item completato";
+          div.innerHTML = `
+            <b>$\{t.titolo}</b><br/>
+            Assegnato a: <i>$\{t.assegnato}</i><br/>
+            Data: $\{t.data}<br/>
+            Note: $\{t.note || "-"}<br/>
+          `;
+          container.appendChild(div);
+        });
     }
+
+    renderArchivio();
   </script>
 </body>
 </html>
