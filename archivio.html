@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archivio Task</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 1em; background: #f0f0f0; }
+    h2 { color: #333; }
+    .archived-task { background: #fff; border-left: 5px solid #888; margin: 1em 0; padding: 1em; opacity: 0.7; }
+    nav a { margin-right: 10px; text-decoration: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← Torna ai task</a>
+  </nav>
+  <h2>🗃️ Archivio Task</h2>
+  <div id="archivio-container"></div>
+  <script>
+    const tasks = JSON.parse(localStorage.getItem("archivio") || "[]");
+    const container = document.getElementById("archivio-container");
+
+    if (tasks.length === 0) {
+      container.innerHTML = "<p>Nessun task archiviato.</p>";
+    } else {
+      tasks.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "archived-task";
+        div.innerHTML = `<strong>${t.titolo}</strong> – ${t.data} – ${t.priorità}<br><em>${t.note || ""}</em><br><small>Assegnato a: ${t.assegnatoA}</small>`;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
