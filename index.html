@@ -63,6 +63,7 @@
       const data = document.getElementById('data').value;
       const note = document.getElementById('note').value;
       tasks.push({ titolo, assegnato, data, note, archived: false });
+      localStorage.setItem('tasks', JSON.stringify(tasks));
       form.reset();
       renderTasks();
     });
@@ -92,11 +93,13 @@
       document.getElementById('data').value = t.data;
       document.getElementById('note').value = t.note;
       tasks.splice(i, 1); // rimuovi e poi reinserisci
+      localStorage.setItem('tasks', JSON.stringify(tasks));
       renderTasks();
     }
 
     function archiveTask(i) {
       tasks[i].archived = true;
+      localStorage.setItem('tasks', JSON.stringify(tasks));
       renderTasks();
     }
   </script>
