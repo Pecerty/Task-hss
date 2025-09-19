@@ -58,6 +58,17 @@
   .checkbox input { width: auto; margin-right: 10px; }
   .task-item { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin: 8px 0; }
   .completato { text-decoration: line-through; color: gray; opacity: 0.7; }
+  .task-buttons { margin-top: 8px; display: flex; gap: 5px; }
+  .task-buttons button {
+    padding: 4px 6px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  .task-buttons button:hover {
+    opacity: 0.8;
+  }
 </style>
 </head>
 <body>
@@ -77,18 +88,14 @@
     <form id="taskForm">
       <label for="titolo">Titolo</label>
       <input type="text" id="titolo" required />
-
       <label for="assegnato">Assegnato a</label>
       <select id="assegnato" required>
         <option value="Mary">Mary</option><option value="Giovanni">Giovanni</option><option value="Peppe">Peppe</option><option value="Cristina">Cristina</option><option value="Edoardo">Edoardo</option><option value="Manutentore">Manutentore</option><option value="Vittoria">Vittoria</option>
       </select>
-
       <label for="data">Data</label>
       <input type="date" id="data" required />
-
       <label for="note">Note</label>
       <textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
-
       <button type="submit">Salva Task</button>
     </form>
 
@@ -107,23 +114,24 @@
       const container = document.getElementById("taskList");
       container.innerHTML = "";
       tasks
-        .filter(t => t.assegnato === "Giovanni" || t.assegnato === "Vittoria")
+        .filter(t => !t.fatto && (t.assegnato === "Giovanni" || t.assegnato === "Vittoria"))
         .sort((a, b) => {
-          const d1 = new Date(b.data) - new Date(a.data);
-          if (d1 !== 0) return d1;
-          return a.titolo.localeCompare(b.titolo);
+          const d = new Date(b.data) - new Date(a.data);
+          return d !== 0 ? d : a.titolo.localeCompare(b.titolo);
         })
         .forEach((t, i) => {
           const div = document.createElement("div");
-          div.className = "task-item" + (t.fatto ? " completato" : "");
+          div.className = "task-item";
           div.innerHTML = `
-            <b>$\{t.titolo}</b><br/>
-            Assegnato a: <i>$\{t.assegnato}</i><br/>
-            Data: $\{t.data}<br/>
-            Note: $\{t.note || "-"}<br/>
-            <button onclick="modifica($\{i})">✏️</button>
-            <button onclick="elimina($\{i})">🗑️</button>
-            <button onclick="completa($\{i})">$\{t.fatto ? "↩️" : "✅"}</button>
+            <b>${t.titolo}</b><br/>
+            Assegnato a: <i>${t.assegnato}</i><br/>
+            Data: ${t.data}<br/>
+            Note: ${t.note || "-"}<br/>
+            <div class="task-buttons">
+              <button onclick="modifica(${i})">✏</button>
+              <button onclick="elimina(${i})">🗑</button>
+              <button onclick="archivia(${i})">✅</button>
+            </div>
           `;
           container.appendChild(div);
         });
@@ -146,8 +154,8 @@
       }
     }
 
-    function completa(i) {
-      tasks[i].fatto = !tasks[i].fatto;
+    function archivia(i) {
+      tasks[i].fatto = true;
       salvaTasks();
       renderTasks();
     }
