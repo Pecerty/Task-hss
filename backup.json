@@ -1,0 +1,37 @@
+[
+  {
+    "titolo": "Pulire cucina",
+    "assegnatoA": "Mary",
+    "data": "2025-09-19",
+    "priorit\u00e0": "Alta",
+    "completato": false
+  },
+  {
+    "titolo": "Controllare caldaia",
+    "assegnatoA": "Manutentore",
+    "data": "2025-09-20",
+    "priorit\u00e0": "Media",
+    "completato": false
+  },
+  {
+    "titolo": "Check-in ospite",
+    "assegnatoA": "Giovanni",
+    "data": "2025-09-21",
+    "priorit\u00e0": "Bassa",
+    "completato": true
+  },
+  {
+    "titolo": "Colazione Mafalda",
+    "assegnatoA": "Cristina",
+    "data": "2025-09-22",
+    "priorit\u00e0": "Alta",
+    "completato": false
+  },
+  {
+    "titolo": "Riordinare documenti",
+    "assegnatoA": "Vittoria",
+    "data": "2025-09-23",
+    "priorit\u00e0": "Media",
+    "completato": false
+  }
+]
