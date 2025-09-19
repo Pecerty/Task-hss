@@ -2,41 +2,97 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lista Spesa Mafalda</title>
   <style>
-    body { font-family: sans-serif; font-size: 13px; padding: 10px; background: #f4f4f4; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 10px; border-radius: 12px; }
-    input[type="text"] { width: 70%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
-    button { padding: 10px 15px; border: none; background: #4CAF50; color: white; border-radius: 8px; cursor: pointer; }
-    ul { list-style-type: none; padding: 0; }
-    li { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-    .done { text-decoration: line-through; color: grey; }
-    .top-link { display: inline-block; margin-bottom: 10px; color: #333; text-decoration: underline; }
+    body { font-family: sans-serif; background: #f0f0f0; padding: 10px; font-size: 14px; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 15px; border-radius: 10px; }
+    input, button { font-size: 14px; padding: 6px 8px; margin: 5px 0; }
+    li { margin: 4px 0; }
+    .barrato { text-decoration: line-through; color: grey; }
+    .acquistati-box { margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px; }
   </style>
-  <script>
-    function addItem() {
-      const itemInput = document.getElementById("itemInput");
-      const itemText = itemInput.value.trim();
-      if (itemText !== "") {
-        const li = document.createElement("li");
-        li.innerHTML = `<span onclick="toggleDone(this)">` + itemText + `</span> <button onclick="removeItem(this)">🗑️</button>`;
-        document.getElementById("spesaList").appendChild(li);
-        itemInput.value = "";
-      }
-    }
-    function toggleDone(span) { span.classList.toggle("done"); }
-    function removeItem(button) { button.parentElement.remove(); }
-  </script>
 </head>
 <body>
   <div class="container">
-    <a href="index.html" class="top-link">← Torna alla Home</a>
-    <h2>Lista della Spesa – Mafalda</h2>
-    <input type="text" id="itemInput" placeholder="Nuovo elemento" />
-    <button onclick="addItem()">Aggiungi</button>
-    <ul id="spesaList"></ul>
+    <a href="index.html">← Torna alla Home</a>
+    <h3>Lista Spesa – Mafalda</h3>
+    <input type="text" id="itemInput" placeholder="Aggiungi un elemento..." />
+    <button onclick="addItem()">➕ Aggiungi</button>
+    <ul id="lista"></ul>
+
+    <div class="acquistati-box">
+      <h4>Acquistati (ultimi 3 giorni)</h4>
+      <ul id="acquistati"></ul>
+    </div>
   </div>
+
+  <script>
+    const key = "spesa_mafalda";
+    let items = JSON.parse(localStorage.getItem(key) || "[]");
+
+    function salva() {
+      localStorage.setItem(key, JSON.stringify(items));
+    }
+
+    function addItem() {
+      const val = document.getElementById("itemInput").value.trim();
+      if (val) {
+        items.push({ testo: val, fatto: false, data: new Date().toISOString() });
+        document.getElementById("itemInput").value = "";
+        salva();
+        render();
+      }
+    }
+
+    function toggleItem(i) {
+      items[i].fatto = !items[i].fatto;
+      items[i].data_fatto = new Date().toISOString();
+      salva();
+      render();
+    }
+
+    function deleteItem(i) {
+      if (confirm("Eliminare questo elemento?")) {
+        items.splice(i, 1);
+        salva();
+        render();
+      }
+    }
+
+    function render() {
+      const lista = document.getElementById("lista");
+      const acc = document.getElementById("acquistati");
+      lista.innerHTML = "";
+      acc.innerHTML = "";
+
+      const oggi = new Date();
+      items = items.filter(it => {
+        if (!it.fatto) return true;
+        const diff = (oggi - new Date(it.data_fatto)) / (1000 * 60 * 60 * 24);
+        return diff <= 3;
+      });
+
+      items.forEach((item, i) => {
+        const li = document.createElement("li");
+        li.className = item.fatto ? "barrato" : "";
+        li.innerHTML = `
+          <input type="checkbox" onclick="toggleItem(${i})" ${item.fatto ? "checked" : ""} />
+          ${item.testo}
+          <button onclick="deleteItem(${i})">🗑️</button>
+        `;
+        if (item.fatto) {
+          acc.appendChild(li);
+        } else {
+          lista.appendChild(li);
+        }
+      });
+
+      salva();
+    }
+
+    render();
+  </script>
 </body>
 </html>
