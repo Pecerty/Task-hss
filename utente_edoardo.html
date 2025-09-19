@@ -61,8 +61,7 @@
 </style>
 </head>
 <body>
-  <header>
-  <a href="index.html">🏠 Home</a>
+  <header><a href="index.html">🏠 Home</a>
 <a href="utente_mary.html">Mary</a>
 <a href="utente_giovanni.html">Giovanni</a>
 <a href="utente_peppe.html">Peppe</a>
@@ -72,10 +71,28 @@
 <a href="utente_vittoria.html">Vittoria</a>
 <a href="spesa_mafalda.html">🛒 Mafalda</a>
 <a href="spesa_vittoria.html">🛒 Vittoria</a>
-<a href="archivio.html">📁 Archivio</a>
-</header>
+<a href="archivio.html">📁 Archivio</a></header>
   <main>
-    <h2>Task Assegnati a Edoardo</h2>
+    <h2>Task di Edoardo</h2>
+    <form id="taskForm">
+      <label for="titolo">Titolo</label>
+      <input type="text" id="titolo" required />
+
+      <label for="assegnato">Assegnato a</label>
+      <select id="assegnato" required>
+        <option value="Mary">Mary</option><option value="Giovanni">Giovanni</option><option value="Peppe">Peppe</option><option value="Cristina">Cristina</option><option value="Edoardo">Edoardo</option><option value="Manutentore">Manutentore</option><option value="Vittoria">Vittoria</option>
+      </select>
+
+      <label for="data">Data</label>
+      <input type="date" id="data" required />
+
+      <label for="note">Note</label>
+      <textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
+
+      <button type="submit">Salva Task</button>
+    </form>
+
+    <h2>Task Attivi</h2>
     <div id="taskList"></div>
   </main>
 
@@ -91,12 +108,17 @@
       container.innerHTML = "";
       tasks
         .filter(t => t.assegnato === "Edoardo" || t.assegnato === "Vittoria" || t.assegnato === "Manutentore")
-        .sort((a, b) => new Date(b.data) - new Date(a.data))
+        .sort((a, b) => {
+          const d1 = new Date(b.data) - new Date(a.data);
+          if (d1 !== 0) return d1;
+          return a.titolo.localeCompare(b.titolo);
+        })
         .forEach((t, i) => {
           const div = document.createElement("div");
           div.className = "task-item" + (t.fatto ? " completato" : "");
           div.innerHTML = `
             <b>$\{t.titolo}</b><br/>
+            Assegnato a: <i>$\{t.assegnato}</i><br/>
             Data: $\{t.data}<br/>
             Note: $\{t.note || "-"}<br/>
             <button onclick="modifica($\{i})">✏️</button>
@@ -109,20 +131,11 @@
 
     function modifica(i) {
       const t = tasks[i];
-      const nuovo_titolo = prompt("Modifica titolo", t.titolo);
-      if (nuovo_titolo !== null) t.titolo = nuovo_titolo;
-
-      const nuova_data = prompt("Modifica data", t.data);
-      if (nuova_data !== null) t.data = nuova_data;
-
-      const nuove_note = prompt("Modifica note", t.note);
-      if (nuove_note !== null) t.note = nuove_note;
-
-      const nuovo_ass = prompt("Riassegna a", t.assegnato);
-      if (nuovo_ass !== null) t.assegnato = nuovo_ass;
-
-      salvaTasks();
-      renderTasks();
+      document.getElementById("titolo").value = t.titolo;
+      document.getElementById("assegnato").value = t.assegnato;
+      document.getElementById("data").value = t.data;
+      document.getElementById("note").value = t.note;
+      elimina(i);
     }
 
     function elimina(i) {
@@ -138,6 +151,21 @@
       salvaTasks();
       renderTasks();
     }
+
+    document.getElementById("taskForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const t = {
+        titolo: document.getElementById("titolo").value,
+        assegnato: document.getElementById("assegnato").value,
+        data: document.getElementById("data").value,
+        note: document.getElementById("note").value,
+        fatto: false
+      };
+      tasks.push(t);
+      salvaTasks();
+      e.target.reset();
+      renderTasks();
+    });
 
     renderTasks();
   </script>

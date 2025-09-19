@@ -61,8 +61,7 @@
 </style>
 </head>
 <body>
-  <header>
-  <a href="index.html">🏠 Home</a>
+  <header><a href="index.html">🏠 Home</a>
 <a href="utente_mary.html">Mary</a>
 <a href="utente_giovanni.html">Giovanni</a>
 <a href="utente_peppe.html">Peppe</a>
@@ -72,8 +71,7 @@
 <a href="utente_vittoria.html">Vittoria</a>
 <a href="spesa_mafalda.html">🛒 Mafalda</a>
 <a href="spesa_vittoria.html">🛒 Vittoria</a>
-<a href="archivio.html">📁 Archivio</a>
-</header>
+<a href="archivio.html">📁 Archivio</a></header>
   <main>
     <h2>Lista Spesa Vittoria</h2>
     <form id="form">
@@ -83,18 +81,16 @@
     <ul id="lista"></ul>
   </main>
   <script>
-    const nomeLista = "spesa_vittoria";
-    const lista = JSON.parse(localStorage.getItem(nomeLista) || "[]").filter(i => {
-      const giorni = 3;
+    const key = "spesa_vittoria";
+    const lista = JSON.parse(localStorage.getItem(key) || "[]").filter(i => {
       const oggi = new Date();
       const data = new Date(i.data);
-      const diff = (oggi - data) / (1000 * 60 * 60 * 24);
-      return diff <= giorni;
+      return (oggi - data) / (1000 * 60 * 60 * 24) <= 3;
     });
-    localStorage.setItem(nomeLista, JSON.stringify(lista));
+    localStorage.setItem(key, JSON.stringify(lista));
 
     function salva() {
-      localStorage.setItem(nomeLista, JSON.stringify(lista));
+      localStorage.setItem(key, JSON.stringify(lista));
     }
 
     function render() {
@@ -117,18 +113,14 @@
     }
 
     function rimuovi(i) {
-      if (confirm("Rimuovere questo elemento?")) {
-        lista.splice(i, 1);
-        salva(); render();
-      }
+      lista.splice(i, 1);
+      salva(); render();
     }
 
     document.getElementById("form").addEventListener("submit", e => {
       e.preventDefault();
-      const testo = document.getElementById("item").value;
-      lista.push({ testo, fatto: false, data: new Date() });
-      salva(); render();
-      e.target.reset();
+      lista.push({ testo: document.getElementById("item").value, fatto: false, data: new Date() });
+      salva(); render(); e.target.reset();
     });
 
     render();

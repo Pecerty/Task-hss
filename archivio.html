@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Archivio Task – Hss Team</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Archivio Task</title>
   <style>
   * { box-sizing: border-box; }
   body { margin: 0; font-family: sans-serif; background: #f9f9f9; font-size: 14px; }
@@ -61,8 +61,7 @@
 </style>
 </head>
 <body>
-  <header>
-  <a href="index.html">🏠 Home</a>
+  <header><a href="index.html">🏠 Home</a>
 <a href="utente_mary.html">Mary</a>
 <a href="utente_giovanni.html">Giovanni</a>
 <a href="utente_peppe.html">Peppe</a>
@@ -72,8 +71,7 @@
 <a href="utente_vittoria.html">Vittoria</a>
 <a href="spesa_mafalda.html">🛒 Mafalda</a>
 <a href="spesa_vittoria.html">🛒 Vittoria</a>
-<a href="archivio.html">📁 Archivio</a>
-</header>
+<a href="archivio.html">📁 Archivio</a></header>
   <main>
     <h2>Archivio Task Completati</h2>
     <div id="archivioList"></div>
@@ -81,12 +79,16 @@
   <script>
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
-    function renderArchivio() {
+    function render() {
       const container = document.getElementById("archivioList");
       container.innerHTML = "";
       tasks
         .filter(t => t.fatto)
-        .sort((a, b) => new Date(b.data) - new Date(a.data))
+        .sort((a, b) => {
+          const d1 = new Date(b.data) - new Date(a.data);
+          if (d1 !== 0) return d1;
+          return a.titolo.localeCompare(b.titolo);
+        })
         .forEach(t => {
           const div = document.createElement("div");
           div.className = "task-item completato";
@@ -99,8 +101,7 @@
           container.appendChild(div);
         });
     }
-
-    renderArchivio();
+    render();
   </script>
 </body>
 </html>
