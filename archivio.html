@@ -2,40 +2,34 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Archivio Task</title>
   <style>
-    body { font-family: sans-serif; padding: 1em; }
-    .archived-task { margin: 1em 0; background: #eee; padding: 1em; border-left: 4px solid #999; }
+    body { font-family: sans-serif; padding: 1em; background: #f9f9f9; }
+    .archived-task {
+      background: white; padding: 1em; margin-bottom: 1em;
+      border-left: 5px solid #777; border-radius: 5px;
+    }
+    @media(max-width: 600px) {
+      .archived-task { font-size: 0.95em; }
+    }
   </style>
 </head>
 <body>
-  
-<nav>
-  <a href="index.html">Home</a>
-  <a href="cristina.html">Cristina</a>
-  <a href="edoardo.html">Edoardo</a>
-  <a href="giovanni.html">Giovanni</a>
-  <a href="manutentore.html">Manutentore</a>
-  <a href="mary.html">Mary</a>
-  <a href="peppe.html">Peppe</a>
-  <a href="vittoria.html">Vittoria</a>
-  <a href="archivio.html">🗃️ Archivio</a>
-  <a href="lista_mafalda.html">🛒 Spesa Mafalda</a>
-  <a href="lista_vittoria.html">🛒 Spesa Vittoria</a>
-</nav>
-
   <h2>🗃️ Archivio Task</h2>
   <div id="archivio-container"></div>
   <script>
-    const archived = JSON.parse(localStorage.getItem("archivio") || "[]");
+    const tasks = JSON.parse(localStorage.getItem("archivio") || "[]");
     const container = document.getElementById("archivio-container");
-    if (archived.length === 0) {
+    if (tasks.length === 0) {
       container.innerHTML = "<p>Nessun task archiviato.</p>";
     } else {
-      archived.forEach(t => {
+      tasks.forEach(t => {
         const div = document.createElement("div");
         div.className = "archived-task";
-        div.innerHTML = `<strong>${t.titolo}</strong> – ${t.data} – ${t.priorità}<br><em>${t.note}</em><br><small>Assegnato a: ${t.assegnatoA}</small>`;
+        div.innerHTML = `<strong>${t.titolo}</strong> – ${t.data} – ${t.priorità}<br>
+                         <em>${t.note || ""}</em><br>
+                         <small>Assegnato a: ${t.assegnatoA}</small>`;
         container.appendChild(div);
       });
     }
