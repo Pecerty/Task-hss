@@ -20,17 +20,17 @@ function renderTasks() {
     container.innerHTML = "";
     const filtered = tasks.filter(task => {
         if (currentPage === "index") return true;
-        const nome = task.assegnatoA;
-        if (currentPage === "giovanni" || currentPage === "peppe" || currentPage === "cristina") {
-            return nome.toLowerCase() === currentPage || nome.toLowerCase() === "vittoria";
-        }
-        if (currentPage === "edoardo") {
-            return nome.toLowerCase() === "edoardo" || nome.toLowerCase() === "manutentore";
+        const nome = task.assegnatoA.toLowerCase();
+        if (currentPage === "giovanni" || currentPage === "cristina") {
+            return nome === currentPage || nome === "vittoria";
         }
         if (currentPage === "peppe") {
-            return nome.toLowerCase() === "peppe" || nome.toLowerCase() === "manutentore";
+            return nome === "peppe" || nome === "vittoria" || nome === "manutentore";
         }
-        return nome.toLowerCase() === currentPage;
+        if (currentPage === "edoardo") {
+            return nome === "edoardo" || nome === "manutentore";
+        }
+        return nome === currentPage;
     });
 
     filtered.forEach((task, index) => {
