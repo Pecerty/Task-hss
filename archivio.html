@@ -2,21 +2,41 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Archivio Task</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+    body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
     .container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
-    .top-link { display: inline-block; margin-bottom: 10px; color: #333; }
-    .task-done { text-decoration: line-through; color: #999; padding: 8px; border-bottom: 1px solid #ddd; }
+    .task { border-bottom: 1px solid #eee; padding: 10px; text-decoration: line-through; color: grey; }
+    .top-link { display: inline-block; margin-bottom: 10px; color: #333; text-decoration: underline; }
   </style>
 </head>
 <body>
   <div class="container">
     <a href="index.html" class="top-link">← Torna alla Home</a>
     <h2>Archivio Task</h2>
-    <div class="task-done">✔️ Esempio task completato – assegnato a Cristina – 15/09/2025</div>
+    <div id="archivioList"></div>
   </div>
+
+  <script>
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const archivioList = document.getElementById("archivioList");
+    const archiviate = tasks.filter(t => t.archived);
+    if (archiviate.length === 0) {
+      archivioList.innerHTML = "<p>Nessun task archiviato.</p>";
+    } else {
+      archiviate.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "task";
+        div.innerHTML = `
+          <strong>${t.titolo}</strong><br>
+          <em>Assegnato a:</em> ${t.assegnato} – <em>${t.data}</em><br>
+          <small>${t.note}</small>
+        `;
+        archivioList.appendChild(div);
+      });
+    }
+  </script>
 </body>
 </html>

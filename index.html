@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hss Team – Task Modificabili</title>
+  <title>Hss Team – Task</title>
   <style>
-    body { font-family: sans-serif; background: #f9f9f9; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #f9f9f9; margin: 0; }
     header { background: #333; color: white; padding: 15px; text-align: center; }
     nav a { margin: 0 10px; color: white; text-decoration: none; font-weight: bold; }
     main { padding: 20px; max-width: 800px; margin: auto; background: white; border-radius: 8px; margin-top: 20px; }
@@ -24,7 +24,16 @@
     <h1>Hss Team</h1>
     <nav>
       <a href="index.html">🏠 Home</a>
-      <a href="#">Archivio</a>
+      <a href="utente_mary.html">Mary</a>
+      <a href="utente_giovanni.html">Giovanni</a>
+      <a href="utente_peppe.html">Peppe</a>
+      <a href="utente_cristina.html">Cristina</a>
+      <a href="utente_edoardo.html">Edoardo</a>
+      <a href="utente_manutentore.html">Manutentore</a>
+      <a href="utente_vittoria.html">Vittoria</a>
+      <a href="spesa_mafalda.html">🛒 Mafalda</a>
+      <a href="spesa_vittoria.html">🛒 Vittoria</a>
+      <a href="archivio.html">📁 Archivio</a>
     </nav>
   </header>
   <main>
@@ -46,15 +55,14 @@
 
     <h2>Elenco Task</h2>
     <div id="taskList"></div>
-  
     <button onclick="backupToDrive()">📤 Salva su Drive</button>
-    </main>
-    
+    <button onclick="restoreFromDrive()">📥 Ripristina da Drive</button>
+  </main>
 
   <script>
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
     const form = document.getElementById('taskForm');
     const taskList = document.getElementById('taskList');
-    let tasks = [];
 
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -63,7 +71,7 @@
       const data = document.getElementById('data').value;
       const note = document.getElementById('note').value;
       tasks.push({ titolo, assegnato, data, note, archived: false });
-      localStorage.setItem('tasks', JSON.stringify(tasks));
+      localStorage.setItem("tasks", JSON.stringify(tasks));
       form.reset();
       renderTasks();
     });
@@ -92,20 +100,50 @@
       document.getElementById('assegnato').value = t.assegnato;
       document.getElementById('data').value = t.data;
       document.getElementById('note').value = t.note;
-      tasks.splice(i, 1); // rimuovi e poi reinserisci
-      localStorage.setItem('tasks', JSON.stringify(tasks));
+      tasks.splice(i, 1);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
       renderTasks();
     }
 
     function archiveTask(i) {
       tasks[i].archived = true;
-      localStorage.setItem('tasks', JSON.stringify(tasks));
+      localStorage.setItem("tasks", JSON.stringify(tasks));
       renderTasks();
     }
+
+    function backupToDrive() {
+      const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "tasks_backup.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function restoreFromDrive() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          try {
+            tasks = JSON.parse(event.target.result);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            renderTasks();
+            alert("Backup ripristinato con successo.");
+          } catch (e) {
+            alert("Errore nel ripristino del backup.");
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    renderTasks();
   </script>
-
-<script src="auth.js"></script>
-<script src="drive.js"></script>
 </body>
-
 </html>
