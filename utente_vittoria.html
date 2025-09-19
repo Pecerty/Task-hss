@@ -6,17 +6,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Vittoria – Task</title>
   <style>
-    body { font-family: sans-serif; background: #f0f0f0; padding: 20px; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
+    body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+    .container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
+    .task { border-bottom: 1px solid #eee; padding: 10px; }
     .top-link { display: inline-block; margin-bottom: 10px; }
+    .archived { text-decoration: line-through; color: gray; }
   </style>
 </head>
 <body>
   <div class="container">
     <a href="index.html" class="top-link">← Torna alla Home</a>
     <h2>Task visibili da Vittoria</h2>
-    <p>Questa pagina mostra i task assegnati a: <strong>Vittoria</strong></p>
-    <p><em>(Caricamento dinamico da implementare)</em></p>
+    <div id="taskList"></div>
   </div>
+
+  <script>
+    const visibili = ["Vittoria"];
+    const taskList = document.getElementById("taskList");
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+    const filtrati = tasks.filter(t => visibili.includes(t.assegnato));
+
+    if (filtrati.length === 0) {
+      taskList.innerHTML = "<p>Nessun task assegnato.</p>";
+    } else {
+      filtrati.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "task" + (t.archived ? " archived" : "");
+        div.innerHTML = `
+          <strong>${t.titolo}</strong><br>
+          <em>Assegnato a:</em> ${t.assegnato} – <em>${t.data}</em><br>
+          <small>${t.note}</small>
+        `;
+        taskList.appendChild(div);
+      });
+    }
+  </script>
 </body>
 </html>
