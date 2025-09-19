@@ -58,6 +58,30 @@
   .checkbox input { width: auto; margin-right: 10px; }
   .task-item { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin: 8px 0; }
   .completato { text-decoration: line-through; color: gray; opacity: 0.7; }
+  .task-buttons { margin-top: 8px; display: flex; gap: 5px; }
+  
+.task-buttons button {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+    padding: 4px 6px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  .task-buttons button:hover {
+    opacity: 0.8;
+  }
+
+.task-buttons .fatto { background-color: #888; }
+.task-buttons .modifica { background-color: #4a90e2; }
+.task-buttons .elimina { background-color: #e05c4c; }
 </style>
 </head>
 <body>
@@ -73,35 +97,30 @@
 <a href="spesa_vittoria.html">🛒 Vittoria</a>
 <a href="archivio.html">📁 Archivio</a></header>
   <main>
-    <h2>Archivio Task Completati</h2>
+    <h2>Archivio Task</h2>
     <div id="archivioList"></div>
   </main>
   <script>
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
-    function render() {
-      const container = document.getElementById("archivioList");
-      container.innerHTML = "";
-      tasks
-        .filter(t => t.fatto)
-        .sort((a, b) => {
-          const d1 = new Date(b.data) - new Date(a.data);
-          if (d1 !== 0) return d1;
-          return a.titolo.localeCompare(b.titolo);
-        })
-        .forEach(t => {
-          const div = document.createElement("div");
-          div.className = "task-item completato";
-          div.innerHTML = `
-            <b>$\{t.titolo}</b><br/>
-            Assegnato a: <i>$\{t.assegnato}</i><br/>
-            Data: $\{t.data}<br/>
-            Note: $\{t.note || "-"}<br/>
-          `;
-          container.appendChild(div);
-        });
-    }
-    render();
+    const container = document.getElementById("archivioList");
+    tasks
+      .filter(t => t.fatto)
+      .sort((a, b) => {
+        const d = new Date(b.data) - new Date(a.data);
+        return d !== 0 ? d : a.titolo.localeCompare(b.titolo);
+      })
+      .forEach((t) => {
+        const div = document.createElement("div");
+        div.className = "task-item completato";
+        div.innerHTML = `
+          <b>${t.titolo}</b><br/>
+          Assegnato a: <i>${t.assegnato}</i><br/>
+          Data: ${t.data}<br/>
+          Note: ${t.note || "-"}<br/>
+        `;
+        container.appendChild(div);
+      });
   </script>
 </body>
 </html>

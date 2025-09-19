@@ -142,7 +142,6 @@
             Note: ${t.note || "-"}<br/>
             <div class="task-buttons">
               <button class="modifica" onclick="modifica(${i})">Modifica</button>
-              <button class="elimina" onclick="elimina(${i})">Elimina</button>
               <button class="fatto" onclick="archivia(${i})">Fatto</button>
             </div>
           `;
@@ -156,15 +155,9 @@
       document.getElementById("assegnato").value = t.assegnato;
       document.getElementById("data").value = t.data;
       document.getElementById("note").value = t.note;
-      elimina(i);
-    }
-
-    function elimina(i) {
-      if (confirm("Eliminare il task?")) {
-        tasks.splice(i, 1);
-        salvaTasks();
-        renderTasks();
-      }
+      tasks.splice(i, 1); // rimuovo e ricreo modificato
+      salvaTasks();
+      renderTasks();
     }
 
     function archivia(i) {
