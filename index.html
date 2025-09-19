@@ -1,107 +1,108 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hss Team – Nuovo Task</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hss Team – Task Modificabili</title>
   <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
-    header {
-      background: #333;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-    }
-    header a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    header a:hover {
-      text-decoration: underline;
-    }
-    main {
-      max-width: 600px;
-      margin: 30px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    h2 { text-align: center; }
-    label { display: block; margin-top: 15px; font-weight: bold; }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    textarea { resize: vertical; min-height: 80px; }
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover { background-color: #45a049; }
-    .checkbox { margin-top: 10px; display: flex; align-items: center; }
-    .checkbox input { width: auto; margin-right: 10px; }
+    body { font-family: sans-serif; background: #f9f9f9; margin: 0; padding: 0; }
+    header { background: #333; color: white; padding: 15px; text-align: center; }
+    nav a { margin: 0 10px; color: white; text-decoration: none; font-weight: bold; }
+    main { padding: 20px; max-width: 800px; margin: auto; background: white; border-radius: 8px; margin-top: 20px; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; }
+    textarea { resize: vertical; min-height: 60px; }
+    button { margin-top: 10px; padding: 10px 20px; border: none; background: #4CAF50; color: white; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #45a049; }
+    .task { border: 1px solid #ddd; padding: 10px; margin-top: 10px; border-radius: 6px; }
+    .archived { text-decoration: line-through; color: grey; background: #f0f0f0; }
+    .actions { margin-top: 5px; }
   </style>
 </head>
 <body>
   <header>
-    <a href="index.html">🏠 Home</a>
-    <a href="utente_mary.html">Mary</a>
-    <a href="utente_giovanni.html">Giovanni</a>
-    <a href="utente_peppe.html">Peppe</a>
-    <a href="utente_cristina.html">Cristina</a>
-    <a href="utente_edoardo.html">Edoardo</a>
-    <a href="utente_manutentore.html">Manutentore</a>
-    <a href="utente_vittoria.html">Vittoria</a>
-    <a href="spesa_mafalda.html">🛒 Mafalda</a>
-    <a href="spesa_vittoria.html">🛒 Vittoria</a>
-    <a href="archivio.html">📁 Archivio</a>
+    <h1>Hss Team</h1>
+    <nav>
+      <a href="index.html">🏠 Home</a>
+      <a href="#">Archivio</a>
+    </nav>
   </header>
   <main>
     <h2>Nuovo Task</h2>
     <form id="taskForm">
       <label for="titolo">Titolo</label>
-      <input type="text" id="titolo" name="titolo" placeholder="Inserisci il titolo del task" required>
-
+      <input type="text" id="titolo" required>
       <label for="assegnato">Assegnato a</label>
-      <select id="assegnato" name="assegnato" required>
-        <option value="Mary">Mary</option>
-        <option value="Giovanni">Giovanni</option>
-        <option value="Peppe">Peppe</option>
-        <option value="Cristina">Cristina</option>
-        <option value="Edoardo">Edoardo</option>
-        <option value="Manutentore">Manutentore</option>
-        <option value="Vittoria">Vittoria</option>
+      <select id="assegnato">
+        <option>Mary</option><option>Giovanni</option><option>Peppe</option>
+        <option>Cristina</option><option>Edoardo</option><option>Manutentore</option><option>Vittoria</option>
       </select>
-
       <label for="data">Data</label>
-      <input type="date" id="data" name="data" required>
-
+      <input type="date" id="data" required>
       <label for="note">Note</label>
-      <textarea id="note" name="note" placeholder="Scrivi eventuali note..."></textarea>
-
-      <div class="checkbox">
-        <input type="checkbox" id="calendar" name="calendar">
-        <label for="calendar">Aggiungi questo task a Google Calendar</label>
-      </div>
-
+      <textarea id="note"></textarea>
       <button type="submit">Salva Task</button>
     </form>
-  </main>
+
+    <h2>Elenco Task</h2>
+    <div id="taskList"></div>
+  
+    <button onclick="backupToDrive()">📤 Salva su Drive</button>
+    </main>
+    
+
+  <script>
+    const form = document.getElementById('taskForm');
+    const taskList = document.getElementById('taskList');
+    let tasks = [];
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const titolo = document.getElementById('titolo').value;
+      const assegnato = document.getElementById('assegnato').value;
+      const data = document.getElementById('data').value;
+      const note = document.getElementById('note').value;
+      tasks.push({ titolo, assegnato, data, note, archived: false });
+      form.reset();
+      renderTasks();
+    });
+
+    function renderTasks() {
+      taskList.innerHTML = '';
+      tasks.forEach((task, i) => {
+        const div = document.createElement('div');
+        div.className = 'task' + (task.archived ? ' archived' : '');
+        div.innerHTML = `
+          <strong>${task.titolo}</strong><br>
+          <em>Assegnato a:</em> ${task.assegnato} – <em>${task.data}</em><br>
+          <small>${task.note}</small>
+          <div class="actions">
+            <button onclick="editTask(${i})">✏️ Modifica</button>
+            <button onclick="archiveTask(${i})">🗂️ Archivia</button>
+          </div>
+        `;
+        taskList.appendChild(div);
+      });
+    }
+
+    function editTask(i) {
+      const t = tasks[i];
+      document.getElementById('titolo').value = t.titolo;
+      document.getElementById('assegnato').value = t.assegnato;
+      document.getElementById('data').value = t.data;
+      document.getElementById('note').value = t.note;
+      tasks.splice(i, 1); // rimuovi e poi reinserisci
+      renderTasks();
+    }
+
+    function archiveTask(i) {
+      tasks[i].archived = true;
+      renderTasks();
+    }
+  </script>
+
+<script src="auth.js"></script>
+<script src="drive.js"></script>
 </body>
+
 </html>
