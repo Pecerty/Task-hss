@@ -1,42 +1,107 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hss Team - Nuovo Task</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hss Team – Nuovo Task</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
-    form { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
-    input, select, textarea, button { width: 100%; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
-    label { margin-top: 15px; display: block; font-weight: bold; }
-    button { background-color: #4CAF50; color: white; font-size: 16px; border: none; cursor: pointer; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
+    header {
+      background: #333;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+    header a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 600px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    textarea { resize: vertical; min-height: 80px; }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
     button:hover { background-color: #45a049; }
+    .checkbox { margin-top: 10px; display: flex; align-items: center; }
+    .checkbox input { width: auto; margin-right: 10px; }
   </style>
 </head>
 <body>
-  <form>
+  <header>
+    <a href="index.html">🏠 Home</a>
+    <a href="utente_mary.html">Mary</a>
+    <a href="utente_giovanni.html">Giovanni</a>
+    <a href="utente_peppe.html">Peppe</a>
+    <a href="utente_cristina.html">Cristina</a>
+    <a href="utente_edoardo.html">Edoardo</a>
+    <a href="utente_manutentore.html">Manutentore</a>
+    <a href="utente_vittoria.html">Vittoria</a>
+    <a href="spesa_mafalda.html">🛒 Mafalda</a>
+    <a href="spesa_vittoria.html">🛒 Vittoria</a>
+    <a href="archivio.html">📁 Archivio</a>
+  </header>
+  <main>
     <h2>Nuovo Task</h2>
-    <label for="titolo">Titolo</label>
-    <input type="text" id="titolo" name="titolo" placeholder="Inserisci il titolo del task" />
+    <form id="taskForm">
+      <label for="titolo">Titolo</label>
+      <input type="text" id="titolo" name="titolo" placeholder="Inserisci il titolo del task" required>
 
-    <label for="assegnato">Assegnato a</label>
-    <select id="assegnato" name="assegnato">
-      <option value="Mary">Mary</option>
-      <option value="Giovanni">Giovanni</option>
-      <option value="Peppe">Peppe</option>
-      <option value="Cristina">Cristina</option>
-      <option value="Edoardo">Edoardo</option>
-      <option value="Manutentore">Manutentore</option>
-      <option value="Vittoria">Vittoria</option>
-    </select>
+      <label for="assegnato">Assegnato a</label>
+      <select id="assegnato" name="assegnato" required>
+        <option value="Mary">Mary</option>
+        <option value="Giovanni">Giovanni</option>
+        <option value="Peppe">Peppe</option>
+        <option value="Cristina">Cristina</option>
+        <option value="Edoardo">Edoardo</option>
+        <option value="Manutentore">Manutentore</option>
+        <option value="Vittoria">Vittoria</option>
+      </select>
 
-    <label for="data">Data</label>
-    <input type="date" id="data" name="data" placeholder="Seleziona la data" />
+      <label for="data">Data</label>
+      <input type="date" id="data" name="data" required>
 
-    <label for="note">Note</label>
-    <textarea id="note" name="note" placeholder="Note aggiuntive..."></textarea>
+      <label for="note">Note</label>
+      <textarea id="note" name="note" placeholder="Scrivi eventuali note..."></textarea>
 
-    <button type="submit">Salva Task</button>
-  </form>
+      <div class="checkbox">
+        <input type="checkbox" id="calendar" name="calendar">
+        <label for="calendar">Aggiungi questo task a Google Calendar</label>
+      </div>
+
+      <button type="submit">Salva Task</button>
+    </form>
+  </main>
 </body>
 </html>

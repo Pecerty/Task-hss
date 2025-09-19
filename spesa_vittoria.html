@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -25,15 +26,8 @@
         itemInput.value = "";
       }
     }
-
-    function toggleDone(span) {
-      span.classList.toggle("done");
-    }
-
-    function removeItem(button) {
-      const li = button.parentElement;
-      li.remove();
-    }
+    function toggleDone(span) { span.classList.toggle("done"); }
+    function removeItem(button) { button.parentElement.remove(); }
   </script>
 </head>
 <body>
