@@ -1,18 +1,56 @@
 
-let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+let tasks = JSON.parse(localStorage.getItem("tasks") || "null");
+const backup = [
+  {
+    "titolo": "Pulire cucina",
+    "assegnatoA": "Mary",
+    "data": "2025-09-19",
+    "priorit\u00e0": "Alta",
+    "completato": false
+  },
+  {
+    "titolo": "Controllare caldaia",
+    "assegnatoA": "Manutentore",
+    "data": "2025-09-20",
+    "priorit\u00e0": "Media",
+    "completato": false
+  },
+  {
+    "titolo": "Check-in ospite",
+    "assegnatoA": "Giovanni",
+    "data": "2025-09-21",
+    "priorit\u00e0": "Bassa",
+    "completato": true
+  },
+  {
+    "titolo": "Colazione Mafalda",
+    "assegnatoA": "Cristina",
+    "data": "2025-09-22",
+    "priorit\u00e0": "Alta",
+    "completato": false
+  },
+  {
+    "titolo": "Riordinare documenti",
+    "assegnatoA": "Vittoria",
+    "data": "2025-09-23",
+    "priorit\u00e0": "Media",
+    "completato": false
+  }
+];
+
+if (!tasks) {
+    tasks = backup;
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
 function saveTasks() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function restoreFromBackup() {
-    fetch("backup.json")
-        .then(res => res.json())
-        .then(data => {
-            tasks = data;
-            saveTasks();
-            location.reload();
-        });
+    tasks = backup;
+    saveTasks();
+    location.reload();
 }
 
 function renderTasks() {
@@ -36,10 +74,10 @@ function renderTasks() {
     filtered.forEach((task, index) => {
         const div = document.createElement("div");
         div.innerHTML = `
-            <p class="\${task.completato ? 'completed' : ''}">
-                <strong>\${task.titolo}</strong> - \${task.data} - \${task.priorità} 
-                <br><small>Assegnato a: \${task.assegnatoA}</small>
-                <br><button onclick="toggleCompletato(\${index})">✔ Fatto</button>
+            <p class="${task.completato ? 'completed' : ''}">
+                <strong>${task.titolo}</strong> - ${task.data} - ${task.priorità}
+                <br><small>Assegnato a: ${task.assegnatoA}</small>
+                <br><button onclick="toggleCompletato(${index})">✔ Fatto</button>
             </p>
         `;
         container.appendChild(div);
@@ -47,8 +85,7 @@ function renderTasks() {
 }
 
 function toggleCompletato(index) {
-    const task = tasks[index];
-    task.completato = !task.completato;
+    tasks[index].completato = !tasks[index].completato;
     saveTasks();
     renderTasks();
 }
