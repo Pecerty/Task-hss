@@ -59,7 +59,16 @@
   .task-item { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin: 8px 0; }
   .completato { text-decoration: line-through; color: gray; opacity: 0.7; }
   .task-buttons { margin-top: 8px; display: flex; gap: 5px; }
-  .task-buttons button {
+  
+.task-buttons button {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
     padding: 4px 6px;
     font-size: 12px;
     border-radius: 6px;
@@ -69,6 +78,10 @@
   .task-buttons button:hover {
     opacity: 0.8;
   }
+
+.task-buttons .fatto { background-color: #888; }
+.task-buttons .modifica { background-color: #4a90e2; }
+.task-buttons .elimina { background-color: #e05c4c; }
 </style>
 </head>
 <body>
@@ -128,9 +141,9 @@
             Data: ${t.data}<br/>
             Note: ${t.note || "-"}<br/>
             <div class="task-buttons">
-              <button onclick="modifica(${i})">✏</button>
-              <button onclick="elimina(${i})">🗑</button>
-              <button onclick="archivia(${i})">✅</button>
+              <button class="modifica" onclick="modifica(${i})">Modifica</button>
+              <button class="elimina" onclick="elimina(${i})">Elimina</button>
+              <button class="fatto" onclick="archivia(${i})">Fatto</button>
             </div>
           `;
           container.appendChild(div);
