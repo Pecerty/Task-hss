@@ -99,98 +99,99 @@ button.elimina { background-color: #b00020; color: white; }
 
     <h3>Acquistati (ultimi 3 giorni)</h3>
     <ul id="listaAcquistati"></ul>
-  </main>
+  <div id="task-list"></div>
+</main>
 
-  <script>
-    const STORAGE_KEY = "spesa_mafalda";
-    let lista = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  
 
-    function salva() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
-    }
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
-    function render() {
-      const oggi = new Date();
-      const daComprare = document.getElementById("listaSpesa");
-      const acquistati = document.getElementById("listaAcquistati");
-      daComprare.innerHTML = "";
-      acquistati.innerHTML = "";
+  // Ordinamento cronologico crescente: più vecchio in alto
+  tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
 
-      lista = lista.filter(item => {
-        if (!item.comprato) return true;
-        const diff = (oggi - new Date(item.data)) / (1000 * 60 * 60 * 24);
-        return diff < 3;
-      });
+  const path = window.location.pathname;
+  const nomePagina = path.substring(path.lastIndexOf('/') + 1);
+  const utente = nomePagina.startsWith("utente_") ? nomePagina.replace("utente_", "").replace(".html", "") : null;
+  const archivio = nomePagina.includes("archivio");
 
-      lista.forEach((item, i) => {
-        const li = document.createElement("li");
-        const nomeSpan = document.createElement("span");
-        nomeSpan.textContent = item.nome;
-        if (item.comprato) {
-          nomeSpan.style.textDecoration = "line-through";
-        }
+  const container = document.getElementById("task-list");
+  container.innerHTML = "";
 
-        const divBtns = document.createElement("div");
-        divBtns.className = "task-buttons";
+  tasks.forEach((t, i) => {
+    const isFatto = t.fatto === true;
+    const visibile =
+      (!archivio && !isFatto && (!utente || t.assegnato === utente || (utente === "edoardo" && (t.assegnato === "vittoria" || t.assegnato === "manutentore")) || (utente === "peppe" && (t.assegnato === "vittoria" || t.assegnato === "manutentore")) || (["giovanni", "cristina"].includes(utente) && t.assegnato === "vittoria")))
+      || (archivio && isFatto);
 
-        if (item.comprato) {
-          const btnRipristina = document.createElement("button");
-          btnRipristina.className = "modifica";
-          btnRipristina.textContent = "↩️";
-          btnRipristina.onclick = () => ripristina(i);
-          divBtns.appendChild(btnRipristina);
-        } else {
-          const btnFatto = document.createElement("button");
-          btnFatto.className = "fatto";
-          btnFatto.textContent = "✅";
-          btnFatto.onclick = () => compra(i);
-          divBtns.appendChild(btnFatto);
-        }
+    if (!visibile) return;
 
-        const btnElimina = document.createElement("button");
-        btnElimina.className = "elimina";
-        btnElimina.textContent = "🗑️";
-        btnElimina.onclick = () => elimina(i);
-        divBtns.appendChild(btnElimina);
+    const div = document.createElement("div");
+    div.className = "task";
+    if (isFatto) div.classList.add("completato");
 
-        li.appendChild(nomeSpan);
-        li.appendChild(divBtns);
+    div.innerHTML = `
+      <strong>${t.titolo}</strong> – <em>${t.data}</em><br>
+      <small>${t.note || ""}</small><br>
+      <div class="bottoni">
+        ${!isFatto ? `<button onclick="segnaFatto(${i})">✅ Fatto</button>` : `
+        <button onclick="ripristina(${i})">↩️ Ripristina</button>
+        <button onclick="elimina(${i})">🗑️ Elimina</button>`}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+});
 
-        (item.comprato ? acquistati : daComprare).appendChild(li);
-      });
+function salvaTasks(tasks) {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  location.reload();
+}
 
-      salva();
-    }
+function segnaFatto(i) {
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks[i].fatto = true;
+  salvaTasks(tasks);
+}
 
-    function compra(i) {
-      lista[i].comprato = true;
-      lista[i].data = new Date();
-      render();
-    }
+function ripristina(i) {
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks[i].fatto = false;
+  salvaTasks(tasks);
+}
 
-    function ripristina(i) {
-      lista[i].comprato = false;
-      render();
-    }
+function elimina(i) {
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks.splice(i, 1);
+  salvaTasks(tasks);
+}
+</script>
 
-    function elimina(i) {
-      if (confirm("Eliminare questo elemento?")) {
-        lista.splice(i, 1);
-        render();
-      }
-    }
+<style>
+.task {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: white;
+}
+.task.completato {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+.bottoni {
+  margin-top: 8px;
+}
+.bottoni button {
+  background: #eee;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+</style>
 
-    document.getElementById("formSpesa").addEventListener("submit", e => {
-      e.preventDefault();
-      const nome = document.getElementById("prodotto").value.trim();
-      if (nome) {
-        lista.push({ nome, comprato: false });
-        e.target.reset();
-        render();
-      }
-    });
-
-    render();
-  </script>
 </body>
 </html>

@@ -96,9 +96,38 @@ button.elimina { background-color: #b00020; color: white; }
 </main>
   
 
+
+<style>
+.task {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: white;
+}
+.task.completato {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+.bottoni {
+  margin-top: 8px;
+}
+.bottoni button {
+  background: #eee;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+</style>
+
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+  // Ordinamento cronologico crescente: più vecchio in alto
   tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
 
   const path = window.location.pathname;
@@ -117,11 +146,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!visibile) return;
 
-    const taskDiv = document.createElement("div");
-    taskDiv.className = "task";
-    if (isFatto) taskDiv.classList.add("completato");
+    const div = document.createElement("div");
+    div.className = "task";
+    if (isFatto) div.classList.add("completato");
 
-    taskDiv.innerHTML = `
+    div.innerHTML = `
       <strong>${t.titolo}</strong> – <em>${t.data}</em><br>
       <small>${t.note || ""}</small><br>
       <div class="bottoni">
@@ -130,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <button onclick="elimina(${i})">🗑️ Elimina</button>`}
       </div>
     `;
-    container.appendChild(taskDiv);
+    container.appendChild(div);
   });
 });
 
@@ -138,22 +167,26 @@ function salvaTasks(tasks) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   location.reload();
 }
+
 function segnaFatto(i) {
   let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
   tasks[i].fatto = true;
   salvaTasks(tasks);
 }
+
 function ripristina(i) {
   let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
   tasks[i].fatto = false;
   salvaTasks(tasks);
 }
+
 function elimina(i) {
   let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
   tasks.splice(i, 1);
   salvaTasks(tasks);
 }
 </script>
+
 <style>
 .task {
   border: 1px solid #ccc;
