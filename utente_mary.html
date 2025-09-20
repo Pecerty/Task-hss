@@ -1,25 +1,177 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>utente_mary</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mary – Hss Team</title>
+  <style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
+header {
+  background: #333;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+header a:hover {
+  text-decoration: underline;
+}
+main {
+  max-width: 600px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+h2 { text-align: center; }
+label { display: block; margin-top: 15px; font-weight: bold; }
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+textarea { resize: vertical; min-height: 80px; }
+button {
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.modifica { background-color: #1976d2; color: white; }
+button.fatto { background-color: #555; color: white; }
+button.elimina { background-color: #b00020; color: white; }
+.task-item {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f4f4f4;
+  border-radius: 10px;
+}
+.task-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.completato b {
+  text-decoration: line-through;
+}
+</style>
 </head>
 <body>
-  <h1>utente_mary</h1>
-  <div id="taskContainer"></div>
   
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    tasks.sort((a, b) => new Date(b.data) - new Date(a.data));
-    const container = document.getElementById("taskContainer");
-    tasks.forEach(t => {
-      const div = document.createElement("div");
-      div.textContent = `${t.data} – ${t.titolo}`;
-      container.appendChild(div);
-    });
-  });
-</script>
+<header>
+  <a href="index.html">🏠 Home</a>
+  <a href="utente_mary.html">Mary</a>
+  <a href="utente_giovanni.html">Giovanni</a>
+  <a href="utente_peppe.html">Peppe</a>
+  <a href="utente_cristina.html">Cristina</a>
+  <a href="utente_edoardo.html">Edoardo</a>
+  <a href="utente_manutentore.html">Manutentore</a>
+  <a href="utente_vittoria.html">Vittoria</a>
+  <a href="spesa_mafalda.html">🛒 Mafalda</a>
+  <a href="spesa_vittoria.html">🛒 Vittoria</a>
+  <a href="archivio.html">📁 Archivio</a>
+</header>
 
+  <main>
+    <h2>Task di Mary</h2>
+    <form id="taskForm">
+      <label for="titolo">Titolo</label>
+      <input type="text" id="titolo" required />
+      <label for="assegnato">Assegnato a</label>
+      <select id="assegnato" required>
+        <option value="Mary">Mary</option><option value="Giovanni">Giovanni</option><option value="Peppe">Peppe</option><option value="Cristina">Cristina</option><option value="Edoardo">Edoardo</option><option value="Manutentore">Manutentore</option><option value="Vittoria">Vittoria</option>
+      </select>
+      <label for="data">Data</label>
+      <input type="date" id="data" required />
+      <label for="note">Note</label>
+      <textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
+      <button type="submit">Salva Task</button>
+    </form>
+
+    <div id="taskList"></div>
+  </main>
+
+  <script>
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+    function salvaTasks() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function renderTasks() {
+      const container = document.getElementById("taskList");
+      container.innerHTML = "";
+      tasks
+        .map((t, i) => { return {...t, index: i}; })
+        .filter(t => !t.fatto && (t.assegnato === "Mary"))
+        .sort((a, b) => {
+          const diff = new Date(b.data) - new Date(a.data);
+          return diff !== 0 ? diff : a.titolo.localeCompare(b.titolo);
+        })
+        .forEach((t) => {
+          const div = document.createElement("div");
+          div.className = "task-item";
+          div.innerHTML = `
+            <b>${t.titolo}</b><br/>
+            Assegnato a: <i>${t.assegnato}</i><br/>
+            Data: ${t.data}<br/>
+            Note: ${t.note || "-"}<br/>
+            <div class="task-buttons">
+              <button class="modifica" onclick="modifica(${t.index})">Modifica</button>
+              <button class="fatto" onclick="archivia(${t.index})">Fatto</button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+    }
+
+    function modifica(i) {
+      const t = tasks[i];
+      document.getElementById("titolo").value = t.titolo;
+      document.getElementById("assegnato").value = t.assegnato;
+      document.getElementById("data").value = t.data;
+      document.getElementById("note").value = t.note;
+      tasks.splice(i, 1);
+      salvaTasks();
+      renderTasks();
+    }
+
+    function archivia(i) {
+      tasks[i].fatto = true;
+      salvaTasks();
+      renderTasks();
+    }
+
+    document.getElementById("taskForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const t = {
+        titolo: document.getElementById("titolo").value,
+        assegnato: document.getElementById("assegnato").value,
+        data: document.getElementById("data").value,
+        note: document.getElementById("note").value,
+        fatto: false
+      };
+      tasks.push(t);
+      salvaTasks();
+      e.target.reset();
+      renderTasks();
+    });
+
+    renderTasks();
+  </script>
 </body>
 </html>
