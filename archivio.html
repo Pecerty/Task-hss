@@ -92,56 +92,92 @@ button.elimina { background-color: #b00020; color: white; }
   <main>
     <h2>Archivio Task</h2>
     <div id="archivioList"></div>
-  </main>
-  <script>
-    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  <div id="task-list"></div>
+</main>
+  
 
-    function salvaTasks() {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
 
-    function renderArchivio() {
-      const container = document.getElementById("archivioList");
-      container.innerHTML = "";
-      tasks
-        .map((t, i) => { return {...t, index: i}; })
-        .filter(t => t.fatto)
-        .sort((a, b) => {
-          const d = new Date(b.data) - new Date(a.data);
-          return d !== 0 ? d : a.titolo.localeCompare(b.titolo);
-        })
-        .forEach((t) => {
-          const div = document.createElement("div");
-          div.className = "task-item completato";
-          div.innerHTML = `
-            <b>${t.titolo}</b><br/>
-            Assegnato a: <i>${t.assegnato}</i><br/>
-            Data: ${t.data}<br/>
-            Note: ${t.note || "-"}<br/>
-            <div class="task-buttons">
-              <button class="modifica" onclick="ripristina(${t.index})">Ripristina</button>
-              <button class="elimina" onclick="elimina(${t.index})">Elimina</button>
-            </div>
-          `;
-          container.appendChild(div);
-        });
-    }
+  const path = window.location.pathname;
+  const nomePagina = path.substring(path.lastIndexOf('/') + 1);
+  const utente = nomePagina.startsWith("utente_") ? nomePagina.replace("utente_", "").replace(".html", "") : null;
+  const archivio = nomePagina.includes("archivio");
 
-    function ripristina(i) {
-      tasks[i].fatto = false;
-      salvaTasks();
-      renderArchivio();
-    }
+  const container = document.getElementById("task-list");
+  container.innerHTML = "";
 
-    function elimina(i) {
-      if (confirm("Eliminare definitivamente questo task?")) {
-        tasks.splice(i, 1);
-        salvaTasks();
-        renderArchivio();
-      }
-    }
+  tasks.forEach((t, i) => {
+    const isFatto = t.fatto === true;
+    const visibile =
+      (!archivio && !isFatto && (!utente || t.assegnato === utente || (utente === "edoardo" && (t.assegnato === "vittoria" || t.assegnato === "manutentore")) || (utente === "peppe" && (t.assegnato === "vittoria" || t.assegnato === "manutentore")) || (["giovanni", "cristina"].includes(utente) && t.assegnato === "vittoria")))
+      || (archivio && isFatto);
 
-    renderArchivio();
-  </script>
+    if (!visibile) return;
+
+    const taskDiv = document.createElement("div");
+    taskDiv.className = "task";
+    if (isFatto) taskDiv.classList.add("completato");
+
+    taskDiv.innerHTML = `
+      <strong>${t.titolo}</strong> – <em>${t.data}</em><br>
+      <small>${t.note || ""}</small><br>
+      <div class="bottoni">
+        ${!isFatto ? `<button onclick="segnaFatto(${i})">✅ Fatto</button>` : `
+        <button onclick="ripristina(${i})">↩️ Ripristina</button>
+        <button onclick="elimina(${i})">🗑️ Elimina</button>`}
+      </div>
+    `;
+    container.appendChild(taskDiv);
+  });
+});
+
+function salvaTasks(tasks) {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  location.reload();
+}
+function segnaFatto(i) {
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks[i].fatto = true;
+  salvaTasks(tasks);
+}
+function ripristina(i) {
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks[i].fatto = false;
+  salvaTasks(tasks);
+}
+function elimina(i) {
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks.splice(i, 1);
+  salvaTasks(tasks);
+}
+</script>
+<style>
+.task {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: white;
+}
+.task.completato {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+.bottoni {
+  margin-top: 8px;
+}
+.bottoni button {
+  background: #eee;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+</style>
+
 </body>
 </html>
