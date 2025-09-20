@@ -99,49 +99,98 @@ button.elimina { background-color: #b00020; color: white; }
 
     <h3>Acquistati (ultimi 3 giorni)</h3>
     <ul id="listaAcquistati"></ul>
-  <div id="task-list"></div>
-</main>
+  </main>
 
-  
+  <script>
+    const STORAGE_KEY = "spesa_vittoria";
+    let lista = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
+    function salva() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+    }
 
+    function render() {
+      const oggi = new Date();
+      const daComprare = document.getElementById("listaSpesa");
+      const acquistati = document.getElementById("listaAcquistati");
+      daComprare.innerHTML = "";
+      acquistati.innerHTML = "";
 
-<style>
-.task {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 12px;
-  background: white;
-}
-.task.completato {
-  opacity: 0.6;
-  text-decoration: line-through;
-}
-.bottoni {
-  margin-top: 8px;
-}
-.bottoni button {
-  background: #eee;
-  border: none;
-  padding: 5px 10px;
-  margin-right: 5px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-</style>
+      lista = lista.filter(item => {
+        if (!item.comprato) return true;
+        const diff = (oggi - new Date(item.data)) / (1000 * 60 * 60 * 24);
+        return diff < 3;
+      });
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    tasks.sort((a, b) => new Date(b.data) - new Date(a.data));
-    const container = document.getElementById("taskContainer");
-    tasks.forEach(t => {
-      const div = document.createElement("div");
-      div.textContent = `${t.data} – ${t.titolo}`;
-      container.appendChild(div);
+      lista.forEach((item, i) => {
+        const li = document.createElement("li");
+        const nomeSpan = document.createElement("span");
+        nomeSpan.textContent = item.nome;
+        if (item.comprato) {
+          nomeSpan.style.textDecoration = "line-through";
+        }
+
+        const divBtns = document.createElement("div");
+        divBtns.className = "task-buttons";
+
+        if (item.comprato) {
+          const btnRipristina = document.createElement("button");
+          btnRipristina.className = "modifica";
+          btnRipristina.textContent = "↩️";
+          btnRipristina.onclick = () => ripristina(i);
+          divBtns.appendChild(btnRipristina);
+        } else {
+          const btnFatto = document.createElement("button");
+          btnFatto.className = "fatto";
+          btnFatto.textContent = "✅";
+          btnFatto.onclick = () => compra(i);
+          divBtns.appendChild(btnFatto);
+        }
+
+        const btnElimina = document.createElement("button");
+        btnElimina.className = "elimina";
+        btnElimina.textContent = "🗑️";
+        btnElimina.onclick = () => elimina(i);
+        divBtns.appendChild(btnElimina);
+
+        li.appendChild(nomeSpan);
+        li.appendChild(divBtns);
+
+        (item.comprato ? acquistati : daComprare).appendChild(li);
+      });
+
+      salva();
+    }
+
+    function compra(i) {
+      lista[i].comprato = true;
+      lista[i].data = new Date();
+      render();
+    }
+
+    function ripristina(i) {
+      lista[i].comprato = false;
+      render();
+    }
+
+    function elimina(i) {
+      if (confirm("Eliminare questo elemento?")) {
+        lista.splice(i, 1);
+        render();
+      }
+    }
+
+    document.getElementById("formSpesa").addEventListener("submit", e => {
+      e.preventDefault();
+      const nome = document.getElementById("prodotto").value.trim();
+      if (nome) {
+        lista.push({ nome, comprato: false });
+        e.target.reset();
+        render();
+      }
     });
-  });
-</script>
+
+    render();
+  </script>
 </body>
 </html>

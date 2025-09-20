@@ -92,75 +92,56 @@ button.elimina { background-color: #b00020; color: white; }
   <main>
     <h2>Archivio Task</h2>
     <div id="archivioList"></div>
-  <div id="task-list"></div>
-</main>
-  
-
-
-<style>
-.task {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 12px;
-  background: white;
-}
-.task.completato {
-  opacity: 0.6;
-  text-decoration: line-through;
-}
-.bottoni {
-  margin-top: 8px;
-}
-.bottoni button {
-  background: #eee;
-  border: none;
-  padding: 5px 10px;
-  margin-right: 5px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-</style>
-
-
-
-
-<style>
-.task {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 12px;
-  background: white;
-}
-.task.completato {
-  opacity: 0.6;
-  text-decoration: line-through;
-}
-.bottoni {
-  margin-top: 8px;
-}
-.bottoni button {
-  background: #eee;
-  border: none;
-  padding: 5px 10px;
-  margin-right: 5px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-</style>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
+  </main>
+  <script>
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    tasks.sort((a, b) => new Date(b.data) - new Date(a.data));
-    const container = document.getElementById("taskContainer");
-    tasks.forEach(t => {
-      const div = document.createElement("div");
-      div.textContent = `${t.data} – ${t.titolo}`;
-      container.appendChild(div);
-    });
-  });
-</script>
+
+    function salvaTasks() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function renderArchivio() {
+      const container = document.getElementById("archivioList");
+      container.innerHTML = "";
+      tasks
+        .map((t, i) => { return {...t, index: i}; })
+        .filter(t => t.fatto)
+        .sort((a, b) => {
+          const d = new Date(b.data) - new Date(a.data);
+          return d !== 0 ? d : a.titolo.localeCompare(b.titolo);
+        })
+        .forEach((t) => {
+          const div = document.createElement("div");
+          div.className = "task-item completato";
+          div.innerHTML = `
+            <b>${t.titolo}</b><br/>
+            Assegnato a: <i>${t.assegnato}</i><br/>
+            Data: ${t.data}<br/>
+            Note: ${t.note || "-"}<br/>
+            <div class="task-buttons">
+              <button class="modifica" onclick="ripristina(${t.index})">Ripristina</button>
+              <button class="elimina" onclick="elimina(${t.index})">Elimina</button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+    }
+
+    function ripristina(i) {
+      tasks[i].fatto = false;
+      salvaTasks();
+      renderArchivio();
+    }
+
+    function elimina(i) {
+      if (confirm("Eliminare definitivamente questo task?")) {
+        tasks.splice(i, 1);
+        salvaTasks();
+        renderArchivio();
+      }
+    }
+
+    renderArchivio();
+  </script>
 </body>
 </html>
