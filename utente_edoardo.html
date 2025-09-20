@@ -135,69 +135,7 @@ button.elimina { background-color: #b00020; color: white; }
 </style>
 
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
-  // Ordinamento cronologico crescente: più vecchio in alto
-  tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
-
-  const path = window.location.pathname;
-  const nomePagina = path.substring(path.lastIndexOf('/') + 1);
-  const utente = nomePagina.startsWith("utente_") ? nomePagina.replace("utente_", "").replace(".html", "") : null;
-  const archivio = nomePagina.includes("archivio");
-
-  const container = document.getElementById("task-list");
-  container.innerHTML = "";
-
-  tasks.forEach((t, i) => {
-    const isFatto = t.fatto === true;
-    const visibile =
-      (!archivio && !isFatto && (!utente || t.assegnato === utente || (utente === "edoardo" && (t.assegnato === "vittoria" || t.assegnato === "manutentore")) || (utente === "peppe" && (t.assegnato === "vittoria" || t.assegnato === "manutentore")) || (["giovanni", "cristina"].includes(utente) && t.assegnato === "vittoria")))
-      || (archivio && isFatto);
-
-    if (!visibile) return;
-
-    const div = document.createElement("div");
-    div.className = "task";
-    if (isFatto) div.classList.add("completato");
-
-    div.innerHTML = `
-      <strong>${t.titolo}</strong> – <em>${t.data}</em><br>
-      <small>${t.note || ""}</small><br>
-      <div class="bottoni">
-        ${!isFatto ? `<button onclick="segnaFatto(${i})">✅ Fatto</button>` : `
-        <button onclick="ripristina(${i})">↩️ Ripristina</button>
-        <button onclick="elimina(${i})">🗑️ Elimina</button>`}
-      </div>
-    `;
-    container.appendChild(div);
-  });
-});
-
-function salvaTasks(tasks) {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  location.reload();
-}
-
-function segnaFatto(i) {
-  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-  tasks[i].fatto = true;
-  salvaTasks(tasks);
-}
-
-function ripristina(i) {
-  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-  tasks[i].fatto = false;
-  salvaTasks(tasks);
-}
-
-function elimina(i) {
-  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-  tasks.splice(i, 1);
-  salvaTasks(tasks);
-}
-</script>
 
 <style>
 .task {
@@ -224,5 +162,17 @@ function elimina(i) {
 }
 </style>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    tasks.sort((a, b) => new Date(b.data) - new Date(a.data));
+    const container = document.getElementById("taskContainer");
+    tasks.forEach(t => {
+      const div = document.createElement("div");
+      div.textContent = `${t.data} – ${t.titolo}`;
+      container.appendChild(div);
+    });
+  });
+</script>
 </body>
 </html>
