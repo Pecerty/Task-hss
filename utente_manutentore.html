@@ -5,97 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Manutentore – Hss Team</title>
   <style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: sans-serif; background: #f9f9f9; font-size: 14px; }
-  header {
-    background: #333;
-    color: white;
-    padding: 15px 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-  }
-  header a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  header a:hover {
-    text-decoration: underline;
-  }
-  main {
-    max-width: 600px;
-    margin: 30px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-  }
-  h2 { text-align: center; }
-  label { display: block; margin-top: 15px; font-weight: bold; }
-  input, select, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-  textarea { resize: vertical; min-height: 80px; }
-  button {
-    margin-top: 20px;
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  button:hover { background-color: #45a049; }
-  .checkbox { margin-top: 10px; display: flex; align-items: center; }
-  .checkbox input { width: auto; margin-right: 10px; }
-  .task-item { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin: 8px 0; }
-  .completato { text-decoration: line-through; color: gray; opacity: 0.7; }
-  .task-buttons { margin-top: 8px; display: flex; gap: 5px; }
-  
-.task-buttons button {
-  padding: 6px 10px;
-  font-size: 13px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
+* { box-sizing: border-box; }
+body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
+header {
+  background: #333;
   color: white;
+  padding: 15px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
 }
-
-    padding: 4px 6px;
-    font-size: 12px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-  }
-  .task-buttons button:hover {
-    opacity: 0.8;
-  }
-
-.task-buttons .fatto { background-color: #888; }
-.task-buttons .modifica { background-color: #4a90e2; }
-.task-buttons .elimina { background-color: #e05c4c; }
+header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+header a:hover {
+  text-decoration: underline;
+}
+main {
+  max-width: 600px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+h2 { text-align: center; }
+label { display: block; margin-top: 15px; font-weight: bold; }
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+textarea { resize: vertical; min-height: 80px; }
+button {
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.modifica { background-color: #1976d2; color: white; }
+button.fatto { background-color: #555; color: white; }
+button.elimina { background-color: #b00020; color: white; }
+.task-item {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f4f4f4;
+  border-radius: 10px;
+}
+.task-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.completato b {
+  text-decoration: line-through;
+}
 </style>
 </head>
 <body>
-  <header><a href="index.html">🏠 Home</a>
-<a href="utente_mary.html">Mary</a>
-<a href="utente_giovanni.html">Giovanni</a>
-<a href="utente_peppe.html">Peppe</a>
-<a href="utente_cristina.html">Cristina</a>
-<a href="utente_edoardo.html">Edoardo</a>
-<a href="utente_manutentore.html">Manutentore</a>
-<a href="utente_vittoria.html">Vittoria</a>
-<a href="spesa_mafalda.html">🛒 Mafalda</a>
-<a href="spesa_vittoria.html">🛒 Vittoria</a>
-<a href="archivio.html">📁 Archivio</a></header>
+  
+<header>
+  <a href="index.html">🏠 Home</a>
+  <a href="utente_mary.html">Mary</a>
+  <a href="utente_giovanni.html">Giovanni</a>
+  <a href="utente_peppe.html">Peppe</a>
+  <a href="utente_cristina.html">Cristina</a>
+  <a href="utente_edoardo.html">Edoardo</a>
+  <a href="utente_manutentore.html">Manutentore</a>
+  <a href="utente_vittoria.html">Vittoria</a>
+  <a href="spesa_mafalda.html">🛒 Mafalda</a>
+  <a href="spesa_vittoria.html">🛒 Vittoria</a>
+  <a href="archivio.html">📁 Archivio</a>
+</header>
+
   <main>
     <h2>Task di Manutentore</h2>
     <form id="taskForm">
@@ -112,7 +102,6 @@
       <button type="submit">Salva Task</button>
     </form>
 
-    <h2>Task Attivi</h2>
     <div id="taskList"></div>
   </main>
 
@@ -127,12 +116,13 @@
       const container = document.getElementById("taskList");
       container.innerHTML = "";
       tasks
+        .map((t, i) => { return {...t, index: i}; })
         .filter(t => !t.fatto && (t.assegnato === "Manutentore"))
         .sort((a, b) => {
-          const d = new Date(b.data) - new Date(a.data);
-          return d !== 0 ? d : a.titolo.localeCompare(b.titolo);
+          const diff = new Date(b.data) - new Date(a.data);
+          return diff !== 0 ? diff : a.titolo.localeCompare(b.titolo);
         })
-        .forEach((t, i) => {
+        .forEach((t) => {
           const div = document.createElement("div");
           div.className = "task-item";
           div.innerHTML = `
@@ -141,8 +131,8 @@
             Data: ${t.data}<br/>
             Note: ${t.note || "-"}<br/>
             <div class="task-buttons">
-              <button class="modifica" onclick="modifica(${i})">Modifica</button>
-              <button class="fatto" onclick="archivia(${i})">Fatto</button>
+              <button class="modifica" onclick="modifica(${t.index})">Modifica</button>
+              <button class="fatto" onclick="archivia(${t.index})">Fatto</button>
             </div>
           `;
           container.appendChild(div);
@@ -155,7 +145,7 @@
       document.getElementById("assegnato").value = t.assegnato;
       document.getElementById("data").value = t.data;
       document.getElementById("note").value = t.note;
-      tasks.splice(i, 1); // rimuovo e ricreo modificato
+      tasks.splice(i, 1);
       salvaTasks();
       renderTasks();
     }
