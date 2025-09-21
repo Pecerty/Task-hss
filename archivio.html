@@ -95,6 +95,9 @@ button.elimina { background-color: #b00020; color: white; }
   </main>
   <script>
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+tasks.sort((a, b) => new Date(a.data) - new Date(b.data)); // ORDINE CRESCENTE
+localStorage.setItem("tasks", JSON.stringify(tasks));
 
     function salvaTasks() {
       localStorage.setItem("tasks", JSON.stringify(tasks));
