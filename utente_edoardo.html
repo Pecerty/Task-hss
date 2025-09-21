@@ -109,74 +109,7 @@ button.elimina { background-color: #b00020; color: white; }
 </div>
 <div id="taskList"></div>
 </main>
-<script>
-    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
-    function salvaTasks() {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
-
-    function renderTasks() {
-      const container = document.getElementById("taskList");
-      container.innerHTML = "";
-      tasks
-        .map((t, i) => { return {...t, index: i}; })
-        .filter(t => !t.fatto && (t.assegnato === "Edoardo" || t.assegnato === "Vittoria" || t.assegnato === "Manutentore"))
-        .sort((a, b) => {
-          const diff = new Date(b.data) - new Date(a.data);
-          return diff !== 0 ? diff : a.titolo.localeCompare(b.titolo);
-        })
-        .forEach((t) => {
-          const div = document.createElement("div");
-          div.className = "task-item";
-          div.innerHTML = `
-            <b>${t.titolo}</b><br/>
-            Assegnato a: <i>${t.assegnato}</i><br/>
-            Data: ${t.data}<br/>
-            Note: ${t.note || "-"}<br/>
-            <div class="task-buttons">
-              <button class="modifica" onclick="modifica(${t.index})">Modifica</button>
-              <button class="fatto" onclick="archivia(${t.index})">Fatto</button>
-            </div>
-          `;
-          container.appendChild(div);
-        });
-    }
-
-    function modifica(i) {
-      const t = tasks[i];
-      document.getElementById("titolo").value = t.titolo;
-      document.getElementById("assegnato").value = t.assegnato;
-      document.getElementById("data").value = t.data;
-      document.getElementById("note").value = t.note;
-      tasks.splice(i, 1);
-      salvaTasks();
-      renderTasks();
-    }
-
-    function archivia(i) {
-      tasks[i].fatto = true;
-      salvaTasks();
-      renderTasks();
-    }
-
-    document.getElementById("taskForm").addEventListener("submit", e => {
-      e.preventDefault();
-      const t = {
-        titolo: document.getElementById("titolo").value,
-        assegnato: document.getElementById("assegnato").value,
-        data: document.getElementById("data").value,
-        note: document.getElementById("note").value,
-        fatto: false
-      };
-      tasks.push(t);
-      salvaTasks();
-      e.target.reset();
-      renderTasks();
-    });
-
-    renderTasks();
-  </script>
 
 
 <script>
@@ -204,20 +137,34 @@ button.elimina { background-color: #b00020; color: white; }
     return tasks;
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function mostraTask() {
     const tasks = caricaTaskOrdinati();
     const container = document.getElementById("taskList");
+    if (!container) return;
+    container.innerHTML = "";
+    tasks.forEach((task, index) => {
+      const div = document.createElement("div");
+      div.className = "task" + (task.archiviato ? " archiviato" : "");
+      div.innerHTML = `
+        <div>
+          <strong>${task.titolo}</strong> – ${task.data}
+          <div><small>${task.note || ""}</small></div>
+        </div>
+        <div class="actions">
+          ${task.archiviato ? `
+            <button onclick="ripristinaTask(${index})">↩️</button>
+            <button onclick="eliminaDefinitivo(${index})">🗑️</button>
+          ` : `
+            <button onclick="modificaTask(${index})">✏️</button>
+            <button onclick="archiviaTask(${index})">✅</button>
+          `}
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
 
-    if (container) {
-      container.innerHTML = "";
-      tasks.forEach((task, index) => {
-        const div = document.createElement("div");
-        div.className = "task";
-        div.innerHTML = `<strong>${task.titolo}</strong> – ${task.data}<br>${task.note || ""}`;
-        container.appendChild(div);
-      });
-    }
-  });
+  document.addEventListener("DOMContentLoaded", mostraTask);
 </script>
 </body>
 </html>

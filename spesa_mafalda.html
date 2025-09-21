@@ -222,20 +222,34 @@ button.elimina { background-color: #b00020; color: white; }
     return tasks;
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function mostraTask() {
     const tasks = caricaTaskOrdinati();
     const container = document.getElementById("taskList");
+    if (!container) return;
+    container.innerHTML = "";
+    tasks.forEach((task, index) => {
+      const div = document.createElement("div");
+      div.className = "task" + (task.archiviato ? " archiviato" : "");
+      div.innerHTML = `
+        <div>
+          <strong>${task.titolo}</strong> – ${task.data}
+          <div><small>${task.note || ""}</small></div>
+        </div>
+        <div class="actions">
+          ${task.archiviato ? `
+            <button onclick="ripristinaTask(${index})">↩️</button>
+            <button onclick="eliminaDefinitivo(${index})">🗑️</button>
+          ` : `
+            <button onclick="modificaTask(${index})">✏️</button>
+            <button onclick="archiviaTask(${index})">✅</button>
+          `}
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
 
-    if (container) {
-      container.innerHTML = "";
-      tasks.forEach((task, index) => {
-        const div = document.createElement("div");
-        div.className = "task";
-        div.innerHTML = `<strong>${task.titolo}</strong> – ${task.data}<br>${task.note || ""}`;
-        container.appendChild(div);
-      });
-    }
-  });
+  document.addEventListener("DOMContentLoaded", mostraTask);
 </script>
 </body>
 </html>
