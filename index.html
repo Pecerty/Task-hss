@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -64,4 +65,128 @@
       border: none;
       cursor: pointer;
     }
-    .task-buttons
+    .task-buttons .done-btn { background: #4caf50; color: white; }
+    .task-buttons .edit-btn { background: #2196f3; color: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>📋 Task – Hss Team</h2>
+  </header>
+  <main>
+    <form id="taskForm">
+      <label for="titolo">Titolo</label>
+      <input type="text" id="titolo" required />
+
+      <label for="assegnato">Assegnato a</label>
+      <select id="assegnato" required>
+        <option>Mary</option>
+        <option>Giovanni</option>
+        <option>Peppe</option>
+        <option>Cristina</option>
+        <option>Edoardo</option>
+        <option>Manutentore</option>
+        <option>Vittoria</option>
+      </select>
+
+      <label for="data">Data</label>
+      <input type="date" id="data" required />
+
+      <label for="note">Note</label>
+      <textarea id="note" placeholder="Scrivi qui le note..."></textarea>
+
+      <button type="submit">Salva Task</button>
+    </form>
+
+    <div style="margin-top: 30px;">
+      <label for="sortSelector"><b>Ordina i task per:</b></label>
+      <select id="sortSelector" style="margin-top: 5px; width: 100%; padding: 8px; border-radius: 8px;">
+        <option value="data_asc">📅 Data (dal più vecchio)</option>
+        <option value="data_desc">📅 Data (dal più recente)</option>
+        <option value="titolo_asc">🔤 Titolo A–Z</option>
+        <option value="titolo_desc">🔠 Titolo Z–A</option>
+      </select>
+    </div>
+
+    <div id="taskList"></div>
+  </main>
+
+  <script>
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    let editIndex = null;
+
+    document.getElementById("taskForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const titolo = document.getElementById("titolo").value;
+      const assegnato = document.getElementById("assegnato").value;
+      const data = document.getElementById("data").value;
+      const note = document.getElementById("note").value;
+
+      const nuovoTask = { titolo, assegnato, data, note, done: false };
+
+      if (editIndex !== null) {
+        tasks[editIndex] = nuovoTask;
+        editIndex = null;
+      } else {
+        tasks.push(nuovoTask);
+      }
+
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      this.reset();
+      renderTasks();
+    });
+
+    function renderTasks() {
+      const taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+
+      let order = localStorage.getItem("sortOrder") || "data_asc";
+      const sortedTasks = [...tasks];
+
+      if (order === "data_asc") sortedTasks.sort((a, b) => new Date(a.data) - new Date(b.data));
+      if (order === "data_desc") sortedTasks.sort((a, b) => new Date(b.data) - new Date(a.data));
+      if (order === "titolo_asc") sortedTasks.sort((a, b) => a.titolo.localeCompare(b.titolo));
+      if (order === "titolo_desc") sortedTasks.sort((a, b) => b.titolo.localeCompare(a.titolo));
+
+      sortedTasks.forEach((t, i) => {
+        const div = document.createElement("div");
+        div.className = "task" + (t.done ? " done" : "");
+
+        div.innerHTML = `
+          <b>${t.titolo}</b><br>
+          📅 ${t.data}<br>
+          👤 ${t.assegnato}<br>
+          📝 ${t.note}
+          <div class="task-buttons">
+            <button class="done-btn" onclick="markDone(${i})">✅</button>
+            <button class="edit-btn" onclick="editTask(${i})">✏️</button>
+          </div>
+        `;
+        taskList.appendChild(div);
+      });
+    }
+
+    function markDone(index) {
+      tasks[index].done = true;
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function editTask(index) {
+      const t = tasks[index];
+      document.getElementById("titolo").value = t.titolo;
+      document.getElementById("assegnato").value = t.assegnato;
+      document.getElementById("data").value = t.data;
+      document.getElementById("note").value = t.note;
+      editIndex = index;
+    }
+
+    document.getElementById("sortSelector").addEventListener("change", function () {
+      localStorage.setItem("sortOrder", this.value);
+      renderTasks();
+    });
+
+    renderTasks();
+  </script>
+</body>
+</html>
