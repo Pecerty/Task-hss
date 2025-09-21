@@ -1,1 +1,196 @@
-<html><body><h2>🛒 Lista Spesa Mafalda</h2></body></html>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lista Spesa – Mafalda</title>
+  <style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
+header {
+  background: #333;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+header a:hover {
+  text-decoration: underline;
+}
+main {
+  max-width: 600px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+h2 { text-align: center; }
+label { display: block; margin-top: 15px; font-weight: bold; }
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+textarea { resize: vertical; min-height: 80px; }
+button {
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.modifica { background-color: #1976d2; color: white; }
+button.fatto { background-color: #555; color: white; }
+button.elimina { background-color: #b00020; color: white; }
+.task-item {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f4f4f4;
+  border-radius: 10px;
+}
+.task-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.completato b {
+  text-decoration: line-through;
+}
+</style>
+</head>
+<body>
+  
+<header>
+  <a href="index.html">🏠 Home</a>
+  <a href="utente_mary.html">Mary</a>
+  <a href="utente_giovanni.html">Giovanni</a>
+  <a href="utente_peppe.html">Peppe</a>
+  <a href="utente_cristina.html">Cristina</a>
+  <a href="utente_edoardo.html">Edoardo</a>
+  <a href="utente_manutentore.html">Manutentore</a>
+  <a href="utente_vittoria.html">Vittoria</a>
+  <a href="spesa_mafalda.html">🛒 Mafalda</a>
+  <a href="spesa_vittoria.html">🛒 Vittoria</a>
+  <a href="archivio.html">📁 Archivio</a>
+</header>
+
+  <main>
+    <h2>Lista Spesa – Mafalda</h2>
+    <form id="formSpesa">
+      <label for="prodotto">Prodotto da acquistare</label>
+      <input type="text" id="prodotto" placeholder="Es. Latte, Pane..." required />
+      <button type="submit">Aggiungi</button>
+    </form>
+
+    <h3>Da acquistare</h3>
+    <ul id="listaSpesa"></ul>
+
+    <h3>Acquistati (ultimi 3 giorni)</h3>
+    <ul id="listaAcquistati"></ul>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "spesa_mafalda";
+    let lista = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+    function salva() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+    }
+
+    function render() {
+      const oggi = new Date();
+      const daComprare = document.getElementById("listaSpesa");
+      const acquistati = document.getElementById("listaAcquistati");
+      daComprare.innerHTML = "";
+      acquistati.innerHTML = "";
+
+      lista = lista.filter(item => {
+        if (!item.comprato) return true;
+        const diff = (oggi - new Date(item.data)) / (1000 * 60 * 60 * 24);
+        return diff < 3;
+      });
+
+      lista.forEach((item, i) => {
+        const li = document.createElement("li");
+        const nomeSpan = document.createElement("span");
+        nomeSpan.textContent = item.nome;
+        if (item.comprato) {
+          nomeSpan.style.textDecoration = "line-through";
+        }
+
+        const divBtns = document.createElement("div");
+        divBtns.className = "task-buttons";
+
+        if (item.comprato) {
+          const btnRipristina = document.createElement("button");
+          btnRipristina.className = "modifica";
+          btnRipristina.textContent = "↩️";
+          btnRipristina.onclick = () => ripristina(i);
+          divBtns.appendChild(btnRipristina);
+        } else {
+          const btnFatto = document.createElement("button");
+          btnFatto.className = "fatto";
+          btnFatto.textContent = "✅";
+          btnFatto.onclick = () => compra(i);
+          divBtns.appendChild(btnFatto);
+        }
+
+        const btnElimina = document.createElement("button");
+        btnElimina.className = "elimina";
+        btnElimina.textContent = "🗑️";
+        btnElimina.onclick = () => elimina(i);
+        divBtns.appendChild(btnElimina);
+
+        li.appendChild(nomeSpan);
+        li.appendChild(divBtns);
+
+        (item.comprato ? acquistati : daComprare).appendChild(li);
+      });
+
+      salva();
+    }
+
+    function compra(i) {
+      lista[i].comprato = true;
+      lista[i].data = new Date();
+      render();
+    }
+
+    function ripristina(i) {
+      lista[i].comprato = false;
+      render();
+    }
+
+    function elimina(i) {
+      if (confirm("Eliminare questo elemento?")) {
+        lista.splice(i, 1);
+        render();
+      }
+    }
+
+    document.getElementById("formSpesa").addEventListener("submit", e => {
+      e.preventDefault();
+      const nome = document.getElementById("prodotto").value.trim();
+      if (nome) {
+        lista.push({ nome, comprato: false });
+        e.target.reset();
+        render();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

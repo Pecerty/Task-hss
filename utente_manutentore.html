@@ -1,249 +1,173 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>manutentore</title>
+  <title>Manutentore – Hss Team</title>
   <style>
-    body { font-family: sans-serif; margin: 0; background: #f7f7f7; }
-    header {
-      background: #333;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-    main {
-      max-width: 600px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    label { font-weight: bold; display: block; margin-top: 15px; }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    textarea { resize: vertical; }
-    button {
-      margin-top: 15px;
-      padding: 12px;
-      width: 100%;
-      background: #4caf50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .task {
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 10px;
-      margin-top: 15px;
-      position: relative;
-      background: #fefefe;
-    }
-    .task.done {
-      opacity: 0.6;
-      text-decoration: line-through;
-    }
-    .task-buttons {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-    }
-    .task-buttons button {
-      margin-left: 5px;
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-    .task-buttons .done-btn { background: #4caf50; color: white; }
-    .task-buttons .edit-btn { background: #2196f3; color: white; }
-  </style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
+header {
+  background: #333;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+header a:hover {
+  text-decoration: underline;
+}
+main {
+  max-width: 600px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+h2 { text-align: center; }
+label { display: block; margin-top: 15px; font-weight: bold; }
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+textarea { resize: vertical; min-height: 80px; }
+button {
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.modifica { background-color: #1976d2; color: white; }
+button.fatto { background-color: #555; color: white; }
+button.elimina { background-color: #b00020; color: white; }
+.task-item {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f4f4f4;
+  border-radius: 10px;
+}
+.task-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.completato b {
+  text-decoration: line-through;
+}
+</style>
 </head>
 <body>
-  <header>
-    <h2>📋 Task – Hss Team</h2>
-  </header>
+  
+<header>
+  <a href="index.html">🏠 Home</a>
+  <a href="utente_mary.html">Mary</a>
+  <a href="utente_giovanni.html">Giovanni</a>
+  <a href="utente_peppe.html">Peppe</a>
+  <a href="utente_cristina.html">Cristina</a>
+  <a href="utente_edoardo.html">Edoardo</a>
+  <a href="utente_manutentore.html">Manutentore</a>
+  <a href="utente_vittoria.html">Vittoria</a>
+  <a href="spesa_mafalda.html">🛒 Mafalda</a>
+  <a href="spesa_vittoria.html">🛒 Vittoria</a>
+  <a href="archivio.html">📁 Archivio</a>
+</header>
+
   <main>
+    <h2>Task di Manutentore</h2>
     <form id="taskForm">
       <label for="titolo">Titolo</label>
       <input type="text" id="titolo" required />
-
       <label for="assegnato">Assegnato a</label>
       <select id="assegnato" required>
-        <option>Mary</option>
-        <option>Giovanni</option>
-        <option>Peppe</option>
-        <option>Cristina</option>
-        <option>Edoardo</option>
-        <option>Manutentore</option>
-        <option>Vittoria</option>
+        <option value="Mary">Mary</option><option value="Giovanni">Giovanni</option><option value="Peppe">Peppe</option><option value="Cristina">Cristina</option><option value="Edoardo">Edoardo</option><option value="Manutentore">Manutentore</option><option value="Vittoria">Vittoria</option>
       </select>
-
       <label for="data">Data</label>
       <input type="date" id="data" required />
-
       <label for="note">Note</label>
-      <textarea id="note" placeholder="Scrivi qui le note..."></textarea>
-
+      <textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
       <button type="submit">Salva Task</button>
     </form>
-
-    <div style="margin-top: 30px;">
-      <label for="sortSelector"><b>Ordina i task per:</b></label>
-      <select id="sortSelector" style="margin-top: 5px; width: 100%; padding: 8px; border-radius: 8px;">
-        <option value="data_asc">📅 Data (dal più vecchio)</option>
-        <option value="data_desc">📅 Data (dal più recente)</option>
-        <option value="titolo_asc">🔤 Titolo A–Z</option>
-        <option value="titolo_desc">🔠 Titolo Z–A</option>
-      </select>
-    </div>
 
     <div id="taskList"></div>
   </main>
 
   <script>
-
-// Archiviazione corretta
-function archiviaTask(index) {
-  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-  const task = tasks.splice(index, 1)[0];
-  task.archiviato = true;
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  const archivio = JSON.parse(localStorage.getItem("archivio") || "[]");
-  archivio.push(task);
-  localStorage.setItem("archivio", JSON.stringify(archivio));
-  location.reload();
-}
-
-// Caricamento con filtro utente e ordine per data crescente
-function caricaTasks(filtroUtente = null) {
-  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-  tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
-
-  const container = document.getElementById("listaTask");
-  if (!container) return;
-  container.innerHTML = "";
-
-  tasks.forEach((task, i) => {
-    if (filtroUtente) {
-      const visibili = [filtroUtente];
-      if (filtroUtente === "Peppe" || filtroUtente === "Edoardo") visibili.push("Manutentore");
-      if (["Peppe", "Giovanni", "Cristina", "Edoardo"].includes(filtroUtente)) visibili.push("Vittoria");
-      if (!visibili.includes(task.assegnato)) return;
-    }
-
-    const div = document.createElement("div");
-    div.innerHTML = \`
-      <div class="task">
-        <div><strong>\${task.titolo}</strong> – \${task.data}<br><small>\${task.note || ""}</small></div>
-        <div class="actions">
-          <button onclick="modificaTask(\${i})">✏️</button>
-          <button onclick="archiviaTask(\${i})">✅</button>
-        </div>
-      </div>\`;
-    container.appendChild(div);
-  });
-}
-
-// Elimina definitiva e ripristina da archivio
-function eliminaDaArchivio(i) {
-  const archivio = JSON.parse(localStorage.getItem("archivio") || "[]");
-  archivio.splice(i, 1);
-  localStorage.setItem("archivio", JSON.stringify(archivio));
-  location.reload();
-}
-function ripristinaDaArchivio(i) {
-  const archivio = JSON.parse(localStorage.getItem("archivio") || "[]");
-  const task = archivio.splice(i, 1)[0];
-  task.archiviato = false;
-  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-  tasks.push(task);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  localStorage.setItem("archivio", JSON.stringify(archivio));
-  location.reload();
-}
-
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    let editIndex = null;
 
-    document.getElementById("taskForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const titolo = document.getElementById("titolo").value;
-      const assegnato = document.getElementById("assegnato").value;
-      const data = document.getElementById("data").value;
-      const note = document.getElementById("note").value;
-
-      const nuovoTask = { titolo, assegnato, data, note, done: false };
-
-      if (editIndex !== null) {
-        tasks[editIndex] = nuovoTask;
-        editIndex = null;
-      } else {
-        tasks.push(nuovoTask);
-      }
-
+    function salvaTasks() {
       localStorage.setItem("tasks", JSON.stringify(tasks));
-      this.reset();
-      renderTasks();
-    });
+    }
 
     function renderTasks() {
-      const taskList = document.getElementById("taskList");
-      taskList.innerHTML = "";
-
-      let order = localStorage.getItem("sortOrder") || "data_asc";
-      const sortedTasks = [...tasks];
-
-      if (order === "data_asc") sortedTasks.sort((a, b) => new Date(a.data) - new Date(b.data));
-      if (order === "data_desc") sortedTasks.sort((a, b) => new Date(b.data) - new Date(a.data));
-      if (order === "titolo_asc") sortedTasks.sort((a, b) => a.titolo.localeCompare(b.titolo));
-      if (order === "titolo_desc") sortedTasks.sort((a, b) => b.titolo.localeCompare(a.titolo));
-
-      sortedTasks.forEach((t, i) => {
-        const div = document.createElement("div");
-        div.className = "task" + (t.done ? " done" : "");
-
-        div.innerHTML = `
-          <b>${t.titolo}</b><br>
-          📅 ${t.data}<br>
-          👤 ${t.assegnato}<br>
-          📝 ${t.note}
-          <div class="task-buttons">
-            <button class="done-btn" onclick="markDone(${i})">✅</button>
-            <button class="edit-btn" onclick="editTask(${i})">✏️</button>
-          </div>
-        `;
-        taskList.appendChild(div);
-      });
+      const container = document.getElementById("taskList");
+      container.innerHTML = "";
+      tasks
+        .map((t, i) => { return {...t, index: i}; })
+        .filter(t => !t.fatto && (t.assegnato === "Manutentore"))
+        .sort((a, b) => {
+          const diff = new Date(b.data) - new Date(a.data);
+          return diff !== 0 ? diff : a.titolo.localeCompare(b.titolo);
+        })
+        .forEach((t) => {
+          const div = document.createElement("div");
+          div.className = "task-item";
+          div.innerHTML = `
+            <b>${t.titolo}</b><br/>
+            Assegnato a: <i>${t.assegnato}</i><br/>
+            Data: ${t.data}<br/>
+            Note: ${t.note || "-"}<br/>
+            <div class="task-buttons">
+              <button class="modifica" onclick="modifica(${t.index})">Modifica</button>
+              <button class="fatto" onclick="archivia(${t.index})">Fatto</button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
     }
 
-    function markDone(index) {
-      tasks[index].done = true;
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-      renderTasks();
-    }
-
-    function editTask(index) {
-      const t = tasks[index];
+    function modifica(i) {
+      const t = tasks[i];
       document.getElementById("titolo").value = t.titolo;
       document.getElementById("assegnato").value = t.assegnato;
       document.getElementById("data").value = t.data;
       document.getElementById("note").value = t.note;
-      editIndex = index;
+      tasks.splice(i, 1);
+      salvaTasks();
+      renderTasks();
     }
 
-    document.getElementById("sortSelector").addEventListener("change", function () {
-      localStorage.setItem("sortOrder", this.value);
+    function archivia(i) {
+      tasks[i].fatto = true;
+      salvaTasks();
+      renderTasks();
+    }
+
+    document.getElementById("taskForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const t = {
+        titolo: document.getElementById("titolo").value,
+        assegnato: document.getElementById("assegnato").value,
+        data: document.getElementById("data").value,
+        note: document.getElementById("note").value,
+        fatto: false
+      };
+      tasks.push(t);
+      salvaTasks();
+      e.target.reset();
       renderTasks();
     });
 
