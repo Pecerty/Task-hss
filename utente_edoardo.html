@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>👤 Task – Edoardo</title>
+  <title>edoardo</title>
   <style>
     body { font-family: sans-serif; margin: 0; background: #f7f7f7; }
     header {
@@ -70,24 +70,8 @@
   </style>
 </head>
 <body>
-<header style='background:#333;color:white;padding:10px;text-align:center'>
-  <nav style='display:flex;flex-wrap:wrap;gap:10px;justify-content:center'>
-    <a href='index.html' style='color:white;text-decoration:none'>🏠 Home</a>
-    <a href='utente_mary.html' style='color:white'>Mary</a>
-    <a href='utente_giovanni.html' style='color:white'>Giovanni</a>
-    <a href='utente_peppe.html' style='color:white'>Peppe</a>
-    <a href='utente_cristina.html' style='color:white'>Cristina</a>
-    <a href='utente_edoardo.html' style='color:white'>Edoardo</a>
-    <a href='utente_manutentore.html' style='color:white'>Manutentore</a>
-    <a href='utente_vittoria.html' style='color:white'>Vittoria</a>
-    <a href='spesa_mafalda.html' style='color:white'>🛒 Mafalda</a>
-    <a href='spesa_vittoria.html' style='color:white'>🛒 Vittoria</a>
-    <a href='archivio.html' style='color:white'>📁 Archivio</a>
-  </nav>
-</header>
-
   <header>
-    <h2>👤 Task – Edoardo</h2>
+    <h2>📋 Task – Hss Team</h2>
   </header>
   <main>
     <form id="taskForm">
@@ -128,6 +112,67 @@
   </main>
 
   <script>
+
+// Archiviazione corretta
+function archiviaTask(index) {
+  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  const task = tasks.splice(index, 1)[0];
+  task.archiviato = true;
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  const archivio = JSON.parse(localStorage.getItem("archivio") || "[]");
+  archivio.push(task);
+  localStorage.setItem("archivio", JSON.stringify(archivio));
+  location.reload();
+}
+
+// Caricamento con filtro utente e ordine per data crescente
+function caricaTasks(filtroUtente = null) {
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
+
+  const container = document.getElementById("listaTask");
+  if (!container) return;
+  container.innerHTML = "";
+
+  tasks.forEach((task, i) => {
+    if (filtroUtente) {
+      const visibili = [filtroUtente];
+      if (filtroUtente === "Peppe" || filtroUtente === "Edoardo") visibili.push("Manutentore");
+      if (["Peppe", "Giovanni", "Cristina", "Edoardo"].includes(filtroUtente)) visibili.push("Vittoria");
+      if (!visibili.includes(task.assegnato)) return;
+    }
+
+    const div = document.createElement("div");
+    div.innerHTML = \`
+      <div class="task">
+        <div><strong>\${task.titolo}</strong> – \${task.data}<br><small>\${task.note || ""}</small></div>
+        <div class="actions">
+          <button onclick="modificaTask(\${i})">✏️</button>
+          <button onclick="archiviaTask(\${i})">✅</button>
+        </div>
+      </div>\`;
+    container.appendChild(div);
+  });
+}
+
+// Elimina definitiva e ripristina da archivio
+function eliminaDaArchivio(i) {
+  const archivio = JSON.parse(localStorage.getItem("archivio") || "[]");
+  archivio.splice(i, 1);
+  localStorage.setItem("archivio", JSON.stringify(archivio));
+  location.reload();
+}
+function ripristinaDaArchivio(i) {
+  const archivio = JSON.parse(localStorage.getItem("archivio") || "[]");
+  const task = archivio.splice(i, 1)[0];
+  task.archiviato = false;
+  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks.push(task);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("archivio", JSON.stringify(archivio));
+  location.reload();
+}
+
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
     let editIndex = null;
 
