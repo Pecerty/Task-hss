@@ -109,89 +109,32 @@ button.elimina { background-color: #b00020; color: white; }
       <label for="note">Note</label>
       <textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
       <button type="submit">Salva Task</button>
+
+<div style="margin-top: 30px;">
+  <label for="sortSelector" style="font-weight:bold;">Ordina i task per:</label>
+  <select id="sortSelector" style="margin-top:5px; padding:6px; width:100%; border-radius:8px;">
+    <option value="data_asc">📅 Data (dal più vecchio)</option>
+    <option value="data_desc">📅 Data (dal più recente)</option>
+    <option value="titolo_asc">🔤 Titolo A–Z</option>
+    <option value="titolo_desc">🔠 Titolo Z–A</option>
+  </select>
+</div>
+
     </form>
 
     <div id="taskList"></div>
   </main>
 
-  <script>
-    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-
-    function salvaTasks() {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
-
-    function renderTasks() {
-      const container = document.getElementById("taskList");
-      container.innerHTML = "";
-      tasks
-        .map((t, i) => { return {...t, index: i}; })
-        .filter(t => !t.fatto && (t.assegnato === "Edoardo" || t.assegnato === "Vittoria" || t.assegnato === "Manutentore"))
-        .sort((a, b) => {
-          const diff = new Date(b.data) - new Date(a.data);
-          return diff !== 0 ? diff : a.titolo.localeCompare(b.titolo);
-        })
-        .forEach((t) => {
-          const div = document.createElement("div");
-          div.className = "task-item";
-          div.innerHTML = `
-            <b>${t.titolo}</b><br/>
-            Assegnato a: <i>${t.assegnato}</i><br/>
-            Data: ${t.data}<br/>
-            Note: ${t.note || "-"}<br/>
-            <div class="task-buttons">
-              <button class="modifica" onclick="modifica(${t.index})">Modifica</button>
-              <button class="fatto" onclick="archivia(${t.index})">Fatto</button>
-            </div>
-          `;
-          container.appendChild(div);
-        });
-    }
-
-    function modifica(i) {
-      const t = tasks[i];
-      document.getElementById("titolo").value = t.titolo;
-      document.getElementById("assegnato").value = t.assegnato;
-      document.getElementById("data").value = t.data;
-      document.getElementById("note").value = t.note;
-      tasks.splice(i, 1);
-      salvaTasks();
-      renderTasks();
-    }
-
-    function archivia(i) {
-      tasks[i].fatto = true;
-      salvaTasks();
-      renderTasks();
-    }
-
-    document.getElementById("taskForm").addEventListener("submit", e => {
-      e.preventDefault();
-      const t = {
-        titolo: document.getElementById("titolo").value,
-        assegnato: document.getElementById("assegnato").value,
-        data: document.getElementById("data").value,
-        note: document.getElementById("note").value,
-        fatto: false
-      };
-      tasks.push(t);
-      salvaTasks();
-      e.target.reset();
-      renderTasks();
-    });
-
-    renderTasks();
-  </script>
-</body>
-</html>
+  
 <script>
-
 const sortSelector = document.getElementById("sortSelector");
-sortSelector.value = localStorage.getItem("sortOrder") || "data_asc";
-sortSelector.addEventListener("change", () => {
-  localStorage.setItem("sortOrder", sortSelector.value);
-  renderSortedTasks();
-});
+if (sortSelector) {
+  sortSelector.value = localStorage.getItem("sortOrder") || "data_asc";
+  sortSelector.addEventListener("change", () => {
+    localStorage.setItem("sortOrder", sortSelector.value);
+    renderSortedTasks();
+  });
+}
 renderSortedTasks();
 
 function renderSortedTasks() {
@@ -199,7 +142,7 @@ function renderSortedTasks() {
   if (taskList) taskList.innerHTML = "";
 
   let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-  const order = sortSelector.value;
+  const order = localStorage.getItem("sortOrder") || "data_asc";
 
   if (order === "data_asc") tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
   else if (order === "data_desc") tasks.sort((a, b) => new Date(b.data) - new Date(a.data));
@@ -208,5 +151,4 @@ function renderSortedTasks() {
 
   tasks.forEach((t, i) => aggiungiTask(t, i));
 }
-
 </script>
