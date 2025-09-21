@@ -107,8 +107,10 @@ button.elimina { background-color: #b00020; color: white; }
 
   <script>
     
+
 let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
+
 
 
     function salvaTasks() {
