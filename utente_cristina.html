@@ -88,6 +88,15 @@ button.elimina { background-color: #b00020; color: white; }
 
   <main>
     <h2>Task di Cristina</h2>
+
+<label for="sortSelector" style="display:block; margin-top:20px; font-weight:bold;">Ordina per:</label>
+<select id="sortSelector" style="margin-top:5px; padding:6px; width:100%; border-radius:8px;">
+  <option value="data_asc">📅 Data (dal più vecchio)</option>
+  <option value="data_desc">📅 Data (dal più recente)</option>
+  <option value="titolo_asc">🔤 Titolo A–Z</option>
+  <option value="titolo_desc">🔠 Titolo Z–A</option>
+</select>
+
     <form id="taskForm">
       <label for="titolo">Titolo</label>
       <input type="text" id="titolo" required />
@@ -106,6 +115,34 @@ button.elimina { background-color: #b00020; color: white; }
   </main>
 
   <script>
+const sortSelector = document.getElementById("sortSelector");
+sortSelector.value = localStorage.getItem("sortOrder") || "data_asc";
+sortSelector.addEventListener("change", () => {
+  localStorage.setItem("sortOrder", sortSelector.value);
+  renderSortedTasks();
+});
+renderSortedTasks();
+
+function renderSortedTasks() {
+  const taskList = document.getElementById("taskList");
+  if (taskList) taskList.innerHTML = "";
+
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  const order = sortSelector.value;
+
+  if (order === "data_asc") tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
+  else if (order === "data_desc") tasks.sort((a, b) => new Date(b.data) - new Date(a.data));
+  else if (order === "titolo_asc") tasks.sort((a, b) => a.titolo.localeCompare(b.titolo));
+  else if (order === "titolo_desc") tasks.sort((a, b) => b.titolo.localeCompare(a.titolo));
+
+  tasks.forEach((t, i) => {
+    // qui ci si aspetta che ci sia già un template di rendering nel file originale
+    // lo lasciamo al codice esistente (non aggiungiamo qui)
+    renderTask(t, i);
+  });
+}
+
+
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
     function salvaTasks() {
