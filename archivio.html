@@ -150,63 +150,6 @@ button.elimina { background-color: #b00020; color: white; }
     renderArchivio();
   </script>
 
-
-<script>
-  function salvaOrdine() {
-    const ordine = document.getElementById("sortOrder").value;
-    localStorage.setItem("ordineTask", ordine);
-    location.reload();
-  }
-
-  function getOrdine() {
-    return localStorage.getItem("ordineTask") || "asc";
-  }
-
-  function caricaTaskOrdinati() {
-    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    const ordine = getOrdine();
-    tasks.sort((a, b) => {
-      return ordine === "asc"
-        ? new Date(a.data) - new Date(b.data)
-        : new Date(b.data) - new Date(a.data);
-    });
-    if (document.getElementById("sortOrder")) {
-      document.getElementById("sortOrder").value = ordine;
-    }
-    return tasks;
-  }
-
-  function mostraTask() {
-    const tasks = caricaTaskOrdinati();
-    const container = document.getElementById("taskList");
-    if (!container) return;
-    container.innerHTML = "";
-    tasks.forEach((task, index) => {
-      const div = document.createElement("div");
-      div.className = "task-box" + (task.archiviato ? " done" : "");
-      div.innerHTML = `
-        <div class="task-content">
-          <div><strong>🗓 ${task.data}</strong></div>
-          <div><strong>🔧 ${task.titolo}</strong></div>
-          <div>📝 ${task.note || "Nessuna nota"}</div>
-          <div>👤 Assegnato a: ${task.assegnato}</div>
-        </div>
-        <div class="task-buttons">
-          ${task.archiviato ? `
-            <button onclick="ripristinaTask(${index})">↩️</button>
-            <button onclick="eliminaDefinitivo(${index})">🗑️</button>
-          ` : `
-            <button onclick="modificaTask(${index})">✏️</button>
-            <button onclick="archiviaTask(${index})">✅</button>
-          `}
-        </div>
-      `;
-      container.appendChild(div);
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", mostraTask);
-</script>
 <style>
   .task-box {
     background: #fff;
@@ -243,5 +186,127 @@ button.elimina { background-color: #b00020; color: white; }
     background: #ddd;
   }
 </style>
+
+<script>
+  function salvaOrdine() {
+    const ordine = document.getElementById("sortOrder").value;
+    localStorage.setItem("ordineTask", ordine);
+    location.reload();
+  }
+
+  function getOrdine() {
+    return localStorage.getItem("ordineTask") || "asc";
+  }
+
+  function caricaTaskOrdinati() {
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const ordine = getOrdine();
+    tasks.sort((a, b) => {
+      return ordine === "asc"
+        ? new Date(a.data) - new Date(b.data)
+        : new Date(b.data) - new Date(a.data);
+    });
+    if (document.getElementById("sortOrder")) {
+      document.getElementById("sortOrder").value = ordine;
+    }
+    return tasks;
+  }
+
+  function salvaTasks(tasks) {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+
+  function mostraTask() {
+    const tasks = caricaTaskOrdinati();
+    const container = document.getElementById("taskList");
+    if (!container) return;
+    container.innerHTML = "";
+
+    const paginaArchivio = window.location.href.includes("archivio");
+
+    tasks.forEach((task, index) => {
+      const visibile = paginaArchivio ? task.archiviato : !task.archiviato;
+
+      if (!visibile) return;
+
+      const div = document.createElement("div");
+      div.className = "task-box" + (task.archiviato ? " done" : "");
+      div.innerHTML = `
+        <div class="task-content">
+          <div><strong>🗓 ${task.data}</strong></div>
+          <div><strong>🔧 ${task.titolo}</strong></div>
+          <div>📝 ${task.note || "Nessuna nota"}</div>
+          <div>👤 Assegnato a: ${task.assegnato}</div>
+        </div>
+        <div class="task-buttons">
+          ${paginaArchivio
+            ? `<button onclick="ripristinaTask(${index})">↩️</button>
+               <button onclick="eliminaDefinitivo(${index})">🗑️</button>`
+            : `<button onclick="modificaTask(${index})">✏️</button>
+               <button onclick="archiviaTask(${index})">✅</button>`}
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function archiviaTask(index) {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    tasks[index].archiviato = true;
+    salvaTasks(tasks);
+    mostraTask();
+  }
+
+  function ripristinaTask(index) {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    tasks[index].archiviato = false;
+    salvaTasks(tasks);
+    mostraTask();
+  }
+
+  function eliminaDefinitivo(index) {
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    tasks.splice(index, 1);
+    salvaTasks(tasks);
+    mostraTask();
+  }
+
+  function modificaTask(index) {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const task = tasks[index];
+    document.getElementById("titolo").value = task.titolo;
+    document.getElementById("assegnato").value = task.assegnato;
+    document.getElementById("data").value = task.data;
+    document.getElementById("note").value = task.note;
+    localStorage.setItem("modificaTaskIndex", index);
+  }
+
+  function salvaTask(e) {
+    e.preventDefault();
+    const titolo = document.getElementById("titolo").value;
+    const assegnato = document.getElementById("assegnato").value;
+    const data = document.getElementById("data").value;
+    const note = document.getElementById("note").value;
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+    const indexModifica = localStorage.getItem("modificaTaskIndex");
+    if (indexModifica !== null) {
+      tasks[indexModifica] = { titolo, assegnato, data, note, archiviato: false };
+      localStorage.removeItem("modificaTaskIndex");
+    } else {
+      tasks.push({ titolo, assegnato, data, note, archiviato: false });
+    }
+
+    salvaTasks(tasks);
+    document.getElementById("taskForm").reset();
+    mostraTask();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    mostraTask();
+    const form = document.getElementById("taskForm");
+    if (form) form.addEventListener("submit", salvaTask);
+  });
+</script>
 </body>
 </html>
