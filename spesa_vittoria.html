@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lista Spesa – Vittoria</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lista Spesa – Vittoria</title>
+<style>
 * { box-sizing: border-box; }
 body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
 header {
@@ -71,37 +72,40 @@ button.elimina { background-color: #b00020; color: white; }
 </style>
 </head>
 <body>
-  
 <header>
-  <a href="index.html">🏠 Home</a>
-  <a href="utente_mary.html">Mary</a>
-  <a href="utente_giovanni.html">Giovanni</a>
-  <a href="utente_peppe.html">Peppe</a>
-  <a href="utente_cristina.html">Cristina</a>
-  <a href="utente_edoardo.html">Edoardo</a>
-  <a href="utente_manutentore.html">Manutentore</a>
-  <a href="utente_vittoria.html">Vittoria</a>
-  <a href="spesa_mafalda.html">🛒 Mafalda</a>
-  <a href="spesa_vittoria.html">🛒 Vittoria</a>
-  <a href="archivio.html">📁 Archivio</a>
+<a href="index.html">🏠 Home</a>
+<a href="utente_mary.html">Mary</a>
+<a href="utente_giovanni.html">Giovanni</a>
+<a href="utente_peppe.html">Peppe</a>
+<a href="utente_cristina.html">Cristina</a>
+<a href="utente_edoardo.html">Edoardo</a>
+<a href="utente_manutentore.html">Manutentore</a>
+<a href="utente_vittoria.html">Vittoria</a>
+<a href="spesa_mafalda.html">🛒 Mafalda</a>
+<a href="spesa_vittoria.html">🛒 Vittoria</a>
+<a href="archivio.html">📁 Archivio</a>
 </header>
+<main>
+<h2>Lista Spesa – Vittoria</h2>
+<form id="formSpesa">
+<label for="prodotto">Prodotto da acquistare</label>
+<input id="prodotto" placeholder="Es. Latte, Pane..." required="" type="text"/>
+<button type="submit">Aggiungi</button>
+</form>
+<div id="orderSelector" style="margin-top: 20px; display: flex; justify-content: flex-start; gap: 10px;">
+<label for="sortOrder"><strong>Ordina per data:</strong></label>
+<select id="sortOrder" onchange="salvaOrdine()">
+<option value="asc">Dal più vecchio</option>
+<option value="desc">Dal più recente</option>
+</select>
+</div>
 
-  <main>
-    <h2>Lista Spesa – Vittoria</h2>
-    <form id="formSpesa">
-      <label for="prodotto">Prodotto da acquistare</label>
-      <input type="text" id="prodotto" placeholder="Es. Latte, Pane..." required />
-      <button type="submit">Aggiungi</button>
-    </form>
-
-    <h3>Da acquistare</h3>
-    <ul id="listaSpesa"></ul>
-
-    <h3>Acquistati (ultimi 3 giorni)</h3>
-    <ul id="listaAcquistati"></ul>
-  </main>
-
-  <script>
+<h3>Da acquistare</h3>
+<ul id="listaSpesa"></ul>
+<h3>Acquistati (ultimi 3 giorni)</h3>
+<ul id="listaAcquistati"></ul>
+</main>
+<script>
     const STORAGE_KEY = "spesa_vittoria";
     let lista = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
@@ -192,5 +196,31 @@ button.elimina { background-color: #b00020; color: white; }
 
     render();
   </script>
+
+<script>
+  function salvaOrdine() {
+    const ordine = document.getElementById("sortOrder").value;
+    localStorage.setItem("ordineTask", ordine);
+    location.reload();
+  }
+
+  function getOrdine() {
+    return localStorage.getItem("ordineTask") || "asc";
+  }
+
+  function caricaTaskOrdinati() {
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const ordine = getOrdine();
+    tasks.sort((a, b) => {
+      return ordine === "asc"
+        ? new Date(a.data) - new Date(b.data)
+        : new Date(b.data) - new Date(a.data);
+    });
+    if (document.getElementById("sortOrder")) {
+      document.getElementById("sortOrder").value = ordine;
+    }
+    return tasks;
+  }
+</script>
 </body>
 </html>

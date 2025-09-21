@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vittoria – Hss Team</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vittoria – Hss Team</title>
+<style>
 * { box-sizing: border-box; }
 body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
 header {
@@ -71,41 +72,45 @@ button.elimina { background-color: #b00020; color: white; }
 </style>
 </head>
 <body>
-  
 <header>
-  <a href="index.html">🏠 Home</a>
-  <a href="utente_mary.html">Mary</a>
-  <a href="utente_giovanni.html">Giovanni</a>
-  <a href="utente_peppe.html">Peppe</a>
-  <a href="utente_cristina.html">Cristina</a>
-  <a href="utente_edoardo.html">Edoardo</a>
-  <a href="utente_manutentore.html">Manutentore</a>
-  <a href="utente_vittoria.html">Vittoria</a>
-  <a href="spesa_mafalda.html">🛒 Mafalda</a>
-  <a href="spesa_vittoria.html">🛒 Vittoria</a>
-  <a href="archivio.html">📁 Archivio</a>
+<a href="index.html">🏠 Home</a>
+<a href="utente_mary.html">Mary</a>
+<a href="utente_giovanni.html">Giovanni</a>
+<a href="utente_peppe.html">Peppe</a>
+<a href="utente_cristina.html">Cristina</a>
+<a href="utente_edoardo.html">Edoardo</a>
+<a href="utente_manutentore.html">Manutentore</a>
+<a href="utente_vittoria.html">Vittoria</a>
+<a href="spesa_mafalda.html">🛒 Mafalda</a>
+<a href="spesa_vittoria.html">🛒 Vittoria</a>
+<a href="archivio.html">📁 Archivio</a>
 </header>
+<main>
+<h2>Task di Vittoria</h2>
+<form id="taskForm">
+<label for="titolo">Titolo</label>
+<input id="titolo" required="" type="text"/>
+<label for="assegnato">Assegnato a</label>
+<select id="assegnato" required="">
+<option value="Mary">Mary</option><option value="Giovanni">Giovanni</option><option value="Peppe">Peppe</option><option value="Cristina">Cristina</option><option value="Edoardo">Edoardo</option><option value="Manutentore">Manutentore</option><option value="Vittoria">Vittoria</option>
+</select>
+<label for="data">Data</label>
+<input id="data" required="" type="date"/>
+<label for="note">Note</label>
+<textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
+<button type="submit">Salva Task</button>
+</form>
+<div id="orderSelector" style="margin-top: 20px; display: flex; justify-content: flex-start; gap: 10px;">
+<label for="sortOrder"><strong>Ordina per data:</strong></label>
+<select id="sortOrder" onchange="salvaOrdine()">
+<option value="asc">Dal più vecchio</option>
+<option value="desc">Dal più recente</option>
+</select>
+</div>
 
-  <main>
-    <h2>Task di Vittoria</h2>
-    <form id="taskForm">
-      <label for="titolo">Titolo</label>
-      <input type="text" id="titolo" required />
-      <label for="assegnato">Assegnato a</label>
-      <select id="assegnato" required>
-        <option value="Mary">Mary</option><option value="Giovanni">Giovanni</option><option value="Peppe">Peppe</option><option value="Cristina">Cristina</option><option value="Edoardo">Edoardo</option><option value="Manutentore">Manutentore</option><option value="Vittoria">Vittoria</option>
-      </select>
-      <label for="data">Data</label>
-      <input type="date" id="data" required />
-      <label for="note">Note</label>
-      <textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
-      <button type="submit">Salva Task</button>
-    </form>
-
-    <div id="taskList"></div>
-  </main>
-
-  <script>
+<div id="taskList"></div>
+</main>
+<script>
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
     function salvaTasks() {
@@ -173,5 +178,31 @@ button.elimina { background-color: #b00020; color: white; }
 
     renderTasks();
   </script>
+
+<script>
+  function salvaOrdine() {
+    const ordine = document.getElementById("sortOrder").value;
+    localStorage.setItem("ordineTask", ordine);
+    location.reload();
+  }
+
+  function getOrdine() {
+    return localStorage.getItem("ordineTask") || "asc";
+  }
+
+  function caricaTaskOrdinati() {
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const ordine = getOrdine();
+    tasks.sort((a, b) => {
+      return ordine === "asc"
+        ? new Date(a.data) - new Date(b.data)
+        : new Date(b.data) - new Date(a.data);
+    });
+    if (document.getElementById("sortOrder")) {
+      document.getElementById("sortOrder").value = ordine;
+    }
+    return tasks;
+  }
+</script>
 </body>
 </html>
