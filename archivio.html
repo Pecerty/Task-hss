@@ -96,10 +96,9 @@ button.elimina { background-color: #b00020; color: white; }
 <option value="desc">Dal più recente</option>
 </select>
 </div>
-
 <h2>Archivio Task</h2>
 <div id="archivioList"></div>
-</main>
+<div id="taskList"></div></main>
 <script>
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
@@ -151,6 +150,7 @@ button.elimina { background-color: #b00020; color: white; }
     renderArchivio();
   </script>
 
+
 <script>
   function salvaOrdine() {
     const ordine = document.getElementById("sortOrder").value;
@@ -175,6 +175,21 @@ button.elimina { background-color: #b00020; color: white; }
     }
     return tasks;
   }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const tasks = caricaTaskOrdinati();
+    const container = document.getElementById("taskList");
+
+    if (container) {
+      container.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const div = document.createElement("div");
+        div.className = "task";
+        div.innerHTML = `<strong>${task.titolo}</strong> – ${task.data}<br>${task.note || ""}`;
+        container.appendChild(div);
+      });
+    }
+  });
 </script>
 </body>
 </html>

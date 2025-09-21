@@ -107,7 +107,6 @@ button.elimina { background-color: #b00020; color: white; }
 <option value="desc">Dal più recente</option>
 </select>
 </div>
-
 <div id="taskList"></div>
 </main>
 <script>
@@ -179,6 +178,7 @@ button.elimina { background-color: #b00020; color: white; }
     renderTasks();
   </script>
 
+
 <script>
   function salvaOrdine() {
     const ordine = document.getElementById("sortOrder").value;
@@ -203,6 +203,21 @@ button.elimina { background-color: #b00020; color: white; }
     }
     return tasks;
   }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const tasks = caricaTaskOrdinati();
+    const container = document.getElementById("taskList");
+
+    if (container) {
+      container.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const div = document.createElement("div");
+        div.className = "task";
+        div.innerHTML = `<strong>${task.titolo}</strong> – ${task.data}<br>${task.note || ""}`;
+        container.appendChild(div);
+      });
+    }
+  });
 </script>
 </body>
 </html>
