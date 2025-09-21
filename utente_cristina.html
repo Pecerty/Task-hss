@@ -1,154 +1,192 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cristina – Hss Team</title>
+  <title>Hss Team – Task</title>
   <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
-header {
-  background: #333;
-  color: white;
-  padding: 15px 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-}
-header a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-header a:hover {
-  text-decoration: underline;
-}
-main {
-  max-width: 600px;
-  margin: 30px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
-}
-h2 { text-align: center; }
-label { display: block; margin-top: 15px; font-weight: bold; }
-input, select, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-textarea { resize: vertical; min-height: 80px; }
-button {
-  margin-top: 10px;
-  padding: 8px 14px;
-  font-size: 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-button.modifica { background-color: #1976d2; color: white; }
-button.fatto { background-color: #555; color: white; }
-button.elimina { background-color: #b00020; color: white; }
-.task-item {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f4f4f4;
-  border-radius: 10px;
-}
-.task-buttons {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.completato b {
-  text-decoration: line-through;
-}
-</style>
+    body { font-family: sans-serif; margin: 0; background: #f7f7f7; }
+    header {
+      background: #333;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    main {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    label { font-weight: bold; display: block; margin-top: 15px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    textarea { resize: vertical; }
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .task {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 15px;
+      position: relative;
+      background: #fefefe;
+    }
+    .task.done {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+    .task-buttons {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    .task-buttons button {
+      margin-left: 5px;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    .task-buttons .done-btn { background: #4caf50; color: white; }
+    .task-buttons .edit-btn { background: #2196f3; color: white; }
+  </style>
 </head>
 <body>
-  
-<header>
-  <a href="index.html">🏠 Home</a>
-  <a href="utente_mary.html">Mary</a>
-  <a href="utente_giovanni.html">Giovanni</a>
-  <a href="utente_peppe.html">Peppe</a>
-  <a href="utente_cristina.html">Cristina</a>
-  <a href="utente_edoardo.html">Edoardo</a>
-  <a href="utente_manutentore.html">Manutentore</a>
-  <a href="utente_vittoria.html">Vittoria</a>
-  <a href="spesa_mafalda.html">🛒 Mafalda</a>
-  <a href="spesa_vittoria.html">🛒 Vittoria</a>
-  <a href="archivio.html">📁 Archivio</a>
-</header>
-
+  <header>
+    <h2>👤 Task – Cristina</h2>
+  </header>
   <main>
-    <h2>Task di Cristina</h2>
-
-<label for="sortSelector" style="display:block; margin-top:20px; font-weight:bold;">Ordina per:</label>
-<select id="sortSelector" style="margin-top:5px; padding:6px; width:100%; border-radius:8px;">
-  <option value="data_asc">📅 Data (dal più vecchio)</option>
-  <option value="data_desc">📅 Data (dal più recente)</option>
-  <option value="titolo_asc">🔤 Titolo A–Z</option>
-  <option value="titolo_desc">🔠 Titolo Z–A</option>
-</select>
-
     <form id="taskForm">
       <label for="titolo">Titolo</label>
       <input type="text" id="titolo" required />
+
       <label for="assegnato">Assegnato a</label>
       <select id="assegnato" required>
-        <option value="Mary">Mary</option><option value="Giovanni">Giovanni</option><option value="Peppe">Peppe</option><option value="Cristina">Cristina</option><option value="Edoardo">Edoardo</option><option value="Manutentore">Manutentore</option><option value="Vittoria">Vittoria</option>
+        <option>Mary</option>
+        <option>Giovanni</option>
+        <option>Peppe</option>
+        <option>Cristina</option>
+        <option>Edoardo</option>
+        <option>Manutentore</option>
+        <option>Vittoria</option>
       </select>
+
       <label for="data">Data</label>
       <input type="date" id="data" required />
+
       <label for="note">Note</label>
-      <textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
+      <textarea id="note" placeholder="Scrivi qui le note..."></textarea>
+
       <button type="submit">Salva Task</button>
-
-<div style="margin-top: 30px;">
-  <label for="sortSelector" style="font-weight:bold;">Ordina i task per:</label>
-  <select id="sortSelector" style="margin-top:5px; padding:6px; width:100%; border-radius:8px;">
-    <option value="data_asc">📅 Data (dal più vecchio)</option>
-    <option value="data_desc">📅 Data (dal più recente)</option>
-    <option value="titolo_asc">🔤 Titolo A–Z</option>
-    <option value="titolo_desc">🔠 Titolo Z–A</option>
-  </select>
-</div>
-
     </form>
+
+    <div style="margin-top: 30px;">
+      <label for="sortSelector"><b>Ordina i task per:</b></label>
+      <select id="sortSelector" style="margin-top: 5px; width: 100%; padding: 8px; border-radius: 8px;">
+        <option value="data_asc">📅 Data (dal più vecchio)</option>
+        <option value="data_desc">📅 Data (dal più recente)</option>
+        <option value="titolo_asc">🔤 Titolo A–Z</option>
+        <option value="titolo_desc">🔠 Titolo Z–A</option>
+      </select>
+    </div>
 
     <div id="taskList"></div>
   </main>
 
-  
-<script>
-const sortSelector = document.getElementById("sortSelector");
-if (sortSelector) {
-  sortSelector.value = localStorage.getItem("sortOrder") || "data_asc";
-  sortSelector.addEventListener("change", () => {
-    localStorage.setItem("sortOrder", sortSelector.value);
-    renderSortedTasks();
-  });
-}
-renderSortedTasks();
+  <script>
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    let editIndex = null;
 
-function renderSortedTasks() {
-  const taskList = document.getElementById("taskList");
-  if (taskList) taskList.innerHTML = "";
+    document.getElementById("taskForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const titolo = document.getElementById("titolo").value;
+      const assegnato = document.getElementById("assegnato").value;
+      const data = document.getElementById("data").value;
+      const note = document.getElementById("note").value;
 
-  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-  const order = localStorage.getItem("sortOrder") || "data_asc";
+      const nuovoTask = { titolo, assegnato, data, note, done: false };
 
-  if (order === "data_asc") tasks.sort((a, b) => new Date(a.data) - new Date(b.data));
-  else if (order === "data_desc") tasks.sort((a, b) => new Date(b.data) - new Date(a.data));
-  else if (order === "titolo_asc") tasks.sort((a, b) => a.titolo.localeCompare(b.titolo));
-  else if (order === "titolo_desc") tasks.sort((a, b) => b.titolo.localeCompare(a.titolo));
+      if (editIndex !== null) {
+        tasks[editIndex] = nuovoTask;
+        editIndex = null;
+      } else {
+        tasks.push(nuovoTask);
+      }
 
-  tasks.forEach((t, i) => aggiungiTask(t, i));
-}
-</script>
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      this.reset();
+      renderTasks();
+    });
+
+    function renderTasks() {
+      const taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+
+      let order = localStorage.getItem("sortOrder") || "data_asc";
+      const sortedTasks = [...tasks];
+
+      if (order === "data_asc") sortedTasks.sort((a, b) => new Date(a.data) - new Date(b.data));
+      if (order === "data_desc") sortedTasks.sort((a, b) => new Date(b.data) - new Date(a.data));
+      if (order === "titolo_asc") sortedTasks.sort((a, b) => a.titolo.localeCompare(b.titolo));
+      if (order === "titolo_desc") sortedTasks.sort((a, b) => b.titolo.localeCompare(a.titolo));
+
+      sortedTasks.forEach((t, i) => {
+        const div = document.createElement("div");
+        div.className = "task" + (t.done ? " done" : "");
+
+        div.innerHTML = `
+          <b>${t.titolo}</b><br>
+          📅 ${t.data}<br>
+          👤 ${t.assegnato}<br>
+          📝 ${t.note}
+          <div class="task-buttons">
+            <button class="done-btn" onclick="markDone(${i})">✅</button>
+            <button class="edit-btn" onclick="editTask(${i})">✏️</button>
+          </div>
+        `;
+        taskList.appendChild(div);
+      });
+    }
+
+    function markDone(index) {
+      tasks[index].done = true;
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function editTask(index) {
+      const t = tasks[index];
+      document.getElementById("titolo").value = t.titolo;
+      document.getElementById("assegnato").value = t.assegnato;
+      document.getElementById("data").value = t.data;
+      document.getElementById("note").value = t.note;
+      editIndex = index;
+    }
+
+    document.getElementById("sortSelector").addEventListener("change", function () {
+      localStorage.setItem("sortOrder", this.value);
+      renderTasks();
+    });
+
+    renderTasks();
+  </script>
+</body>
+</html>
