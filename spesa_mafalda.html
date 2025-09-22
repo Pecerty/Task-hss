@@ -1,138 +1,359 @@
-
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Lista Spesa – HSS Team</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="compact_style.css">
-  <style>
-    .sessione {
-      background: #fff;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.05);
-    }
-    .sessione h3 {
-      margin: 0 0 10px;
-      font-size: 16px;
-    }
-    .prodotti {
-      margin-top: 10px;
-      list-style: none;
-      padding: 0;
-    }
-    .prodotti li {
-      display: flex;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-    .prodotti input[type="checkbox"] {
-      margin-right: 10px;
-    }
-    .aggiungi-prodotto {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .aggiungi-prodotto input {
-      flex: 1;
-    }
-    #nuovaData {
-      margin-bottom: 10px;
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lista Spesa – Mafalda</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
+header {
+  background: #333;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+header a:hover {
+  text-decoration: underline;
+}
+main {
+  max-width: 600px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+h2 { text-align: center; }
+label { display: block; margin-top: 15px; font-weight: bold; }
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+textarea { resize: vertical; min-height: 80px; }
+button {
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.modifica { background-color: #1976d2; color: white; }
+button.fatto { background-color: #555; color: white; }
+button.elimina { background-color: #b00020; color: white; }
+.task-item {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f4f4f4;
+  border-radius: 10px;
+}
+.task-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.completato b {
+  text-decoration: line-through;
+}
+</style>
 </head>
 <body>
-
 <header>
-  <nav style="background: #333; color: white; padding: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-    <a href="index.html" style="color: white; text-decoration: none; font-weight: bold;">🏠 Home</a>
-    <a href="utente_mary.html" style="color: white; text-decoration: none; font-weight: bold;">Mary</a>
-    <a href="utente_giovanni.html" style="color: white; text-decoration: none; font-weight: bold;">Giovanni</a>
-    <a href="utente_peppe.html" style="color: white; text-decoration: none; font-weight: bold;">Peppe</a>
-    <a href="utente_cristina.html" style="color: white; text-decoration: none; font-weight: bold;">Cristina</a>
-    <a href="utente_edoardo.html" style="color: white; text-decoration: none; font-weight: bold;">Edoardo</a>
-    <a href="utente_manutentore.html" style="color: white; text-decoration: none; font-weight: bold;">Manutentore</a>
-    <a href="utente_vittoria.html" style="color: white; text-decoration: none; font-weight: bold;">Vittoria</a>
-    <a href="spesa_mafalda.html" style="color: white; text-decoration: none; font-weight: bold;">🛒 Mafalda</a>
-    <a href="spesa_vittoria.html" style="color: white; text-decoration: none; font-weight: bold;">🛒 Vittoria</a>
-    <a href="archivio.html" style="color: white; text-decoration: none; font-weight: bold;">📁 Archivio</a>
-  </nav>
+<a href="index.html">🏠 Home</a>
+<a href="utente_mary.html">Mary</a>
+<a href="utente_giovanni.html">Giovanni</a>
+<a href="utente_peppe.html">Peppe</a>
+<a href="utente_cristina.html">Cristina</a>
+<a href="utente_edoardo.html">Edoardo</a>
+<a href="utente_manutentore.html">Manutentore</a>
+<a href="utente_vittoria.html">Vittoria</a>
+<a href="spesa_mafalda.html">🛒 Mafalda</a>
+<a href="spesa_vittoria.html">🛒 Vittoria</a>
+<a href="archivio.html">📁 Archivio</a>
 </header>
-
-  <main style="max-width: 600px; margin: auto; padding: 20px;">
-    <h2>🛒 Spesa Mafalda</h2>
-
-    <label for="nuovaData"><strong>Nuova spesa del:</strong></label>
-    <input type="date" id="nuovaData">
-    <button onclick="creaSessione()">➕ Nuova Sessione</button>
-
-    <div id="contenitoreSpese"></div>
-  <div id="spese-container"></div>
-</main>
-
-  <script>
-    let spese = JSON.parse(localStorage.getItem("spese") || "[]");
+<main>
+<h2>Lista Spesa – Mafalda</h2>
+<form id="formSpesa">
+<label for="prodotto">Prodotto da acquistare</label>
+<input id="prodotto" placeholder="Es. Latte, Pane..." required="" type="text"/>
+<button type="submit">Aggiungi</button>
+</form>
+<div id="orderSelector" style="margin-top: 20px; display: flex; justify-content: flex-start; gap: 10px;">
+<label for="sortOrder"><strong>Ordina per data:</strong></label>
+<select id="sortOrder" onchange="salvaOrdine()">
+<option value="asc">Dal più vecchio</option>
+<option value="desc">Dal più recente</option>
+</select>
+</div>
+<h3>Da acquistare</h3>
+<ul id="listaSpesa"></ul>
+<h3>Acquistati (ultimi 3 giorni)</h3>
+<ul id="listaAcquistati"></ul>
+<div id="taskList"></div></main>
+<script>
+    const STORAGE_KEY = "spesa_mafalda";
+    let lista = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
     function salva() {
-      localStorage.setItem("spese", JSON.stringify(spese));
-    }
-
-    function creaSessione() {
-      const data = document.getElementById("nuovaData").value;
-      if (!data) return alert("Seleziona una data.");
-      const nuova = { data, prodotti: [] };
-      spese.push(nuova);
-      salva();
-      render();
-      document.getElementById("nuovaData").value = "";
-    }
-
-    function aggiungiProdotto(index, inputId) {
-      const input = document.getElementById(inputId);
-      const nome = input.value.trim();
-      if (!nome) return;
-      spese[index].prodotti.push({ nome, fatto: false });
-      salva();
-      render();
-    }
-
-    function toggleProdotto(sessioneIndex, prodottoIndex) {
-      spese[sessioneIndex].prodotti[prodottoIndex].fatto = 
-        !spese[sessioneIndex].prodotti[prodottoIndex].fatto;
-      salva();
-      render();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
     }
 
     function render() {
-      const c = document.getElementById("contenitoreSpese");
-      c.innerHTML = "";
-      spese.forEach((s, idx) => {
-        const div = document.createElement("div");
-        div.className = "sessione";
+      const oggi = new Date();
+      const daComprare = document.getElementById("listaSpesa");
+      const acquistati = document.getElementById("listaAcquistati");
+      daComprare.innerHTML = "";
+      acquistati.innerHTML = "";
 
-        div.innerHTML = \`
-          <h3>🗓️ Spesa del: <em>\${s.data}</em></h3>
-          <div class="aggiungi-prodotto">
-            <input type="text" id="input-\${idx}" placeholder="Aggiungi prodotto">
-            <button onclick="aggiungiProdotto(\${idx}, 'input-\${idx}')">➕</button>
-          </div>
-          <ul class="prodotti">
-            \${s.prodotti.map((p, i) => \`
-              <li>
-                <input type="checkbox" \${p.fatto ? "checked" : ""} onclick="toggleProdotto(\${idx}, \${i})">
-                <span style="\${p.fatto ? 'text-decoration: line-through; color: gray;' : ''}">\${p.nome}</span>
-              </li>
-            \`).join("")}
-          </ul>
-        \`;
-        c.appendChild(div);
+      lista = lista.filter(item => {
+        if (!item.comprato) return true;
+        const diff = (oggi - new Date(item.data)) / (1000 * 60 * 60 * 24);
+        return diff < 3;
       });
+
+      lista.forEach((item, i) => {
+        const li = document.createElement("li");
+        const nomeSpan = document.createElement("span");
+        nomeSpan.textContent = item.nome;
+        if (item.comprato) {
+          nomeSpan.style.textDecoration = "line-through";
+        }
+
+        const divBtns = document.createElement("div");
+        divBtns.className = "task-buttons";
+
+        if (item.comprato) {
+          const btnRipristina = document.createElement("button");
+          btnRipristina.className = "modifica";
+          btnRipristina.textContent = "↩️";
+          btnRipristina.onclick = () => ripristina(i);
+          divBtns.appendChild(btnRipristina);
+        } else {
+          const btnFatto = document.createElement("button");
+          btnFatto.className = "fatto";
+          btnFatto.textContent = "✅";
+          btnFatto.onclick = () => compra(i);
+          divBtns.appendChild(btnFatto);
+        }
+
+        const btnElimina = document.createElement("button");
+        btnElimina.className = "elimina";
+        btnElimina.textContent = "🗑️";
+        btnElimina.onclick = () => elimina(i);
+        divBtns.appendChild(btnElimina);
+
+        li.appendChild(nomeSpan);
+        li.appendChild(divBtns);
+
+        (item.comprato ? acquistati : daComprare).appendChild(li);
+      });
+
+      salva();
     }
+
+    function compra(i) {
+      lista[i].comprato = true;
+      lista[i].data = new Date();
+      render();
+    }
+
+    function ripristina(i) {
+      lista[i].comprato = false;
+      render();
+    }
+
+    function elimina(i) {
+      if (confirm("Eliminare questo elemento?")) {
+        lista.splice(i, 1);
+        render();
+      }
+    }
+
+    document.getElementById("formSpesa").addEventListener("submit", e => {
+      e.preventDefault();
+      const nome = document.getElementById("prodotto").value.trim();
+      if (nome) {
+        lista.push({ nome, comprato: false });
+        e.target.reset();
+        render();
+      }
+    });
 
     render();
   </script>
+
+<style>
+  .task-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .task-box.done {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  .task-content > div {
+    margin-bottom: 5px;
+  }
+  .task-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  .task-buttons button {
+    background: #eee;
+    border: none;
+    padding: 6px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  .task-buttons button:hover {
+    background: #ddd;
+  }
+</style>
+
+<script>
+  function salvaOrdine() {
+    const ordine = document.getElementById("sortOrder").value;
+    localStorage.setItem("ordineTask", ordine);
+    location.reload();
+  }
+
+  function getOrdine() {
+    return localStorage.getItem("ordineTask") || "asc";
+  }
+
+  function caricaTaskOrdinati() {
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const ordine = getOrdine();
+    tasks.sort((a, b) => {
+      return ordine === "asc"
+        ? new Date(a.data) - new Date(b.data)
+        : new Date(b.data) - new Date(a.data);
+    });
+    if (document.getElementById("sortOrder")) {
+      document.getElementById("sortOrder").value = ordine;
+    }
+    return tasks;
+  }
+
+  function salvaTasks(tasks) {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+
+  function mostraTask() {
+    const tasks = caricaTaskOrdinati();
+    const container = document.getElementById("taskList");
+    if (!container) return;
+    container.innerHTML = "";
+
+    const paginaArchivio = window.location.href.includes("archivio");
+
+    tasks.forEach((task, index) => {
+      const visibile = paginaArchivio ? task.archiviato : !task.archiviato;
+
+      if (!visibile) return;
+
+      const div = document.createElement("div");
+      div.className = "task-box" + (task.archiviato ? " done" : "");
+      div.innerHTML = `
+        <div class="task-content">
+          <div><strong>🗓 ${task.data}</strong></div>
+          <div><strong>🔧 ${task.titolo}</strong></div>
+          <div>📝 ${task.note || "Nessuna nota"}</div>
+          <div>👤 Assegnato a: ${task.assegnato}</div>
+        </div>
+        <div class="task-buttons">
+          ${paginaArchivio
+            ? `<button onclick="ripristinaTask(${index})">↩️</button>
+               <button onclick="eliminaDefinitivo(${index})">🗑️</button>`
+            : `<button onclick="modificaTask(${index})">✏️</button>
+               <button onclick="archiviaTask(${index})">✅</button>`}
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function archiviaTask(index) {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    tasks[index].archiviato = true;
+    salvaTasks(tasks);
+    mostraTask();
+  }
+
+  function ripristinaTask(index) {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    tasks[index].archiviato = false;
+    salvaTasks(tasks);
+    mostraTask();
+  }
+
+  function eliminaDefinitivo(index) {
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    tasks.splice(index, 1);
+    salvaTasks(tasks);
+    mostraTask();
+  }
+
+  function modificaTask(index) {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const task = tasks[index];
+    document.getElementById("titolo").value = task.titolo;
+    document.getElementById("assegnato").value = task.assegnato;
+    document.getElementById("data").value = task.data;
+    document.getElementById("note").value = task.note;
+    localStorage.setItem("modificaTaskIndex", index);
+  }
+
+  function salvaTask(e) {
+    e.preventDefault();
+    const titolo = document.getElementById("titolo").value;
+    const assegnato = document.getElementById("assegnato").value;
+    const data = document.getElementById("data").value;
+    const note = document.getElementById("note").value;
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+    const indexModifica = localStorage.getItem("modificaTaskIndex");
+    if (indexModifica !== null) {
+      tasks[indexModifica] = { titolo, assegnato, data, note, archiviato: false };
+      localStorage.removeItem("modificaTaskIndex");
+    } else {
+      tasks.push({ titolo, assegnato, data, note, archiviato: false });
+    }
+
+    salvaTasks(tasks);
+    document.getElementById("taskForm").reset();
+    mostraTask();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    mostraTask();
+    const form = document.getElementById("taskForm");
+    if (form) form.addEventListener("submit", salvaTask);
+  });
+</script>
 </body>
 </html>
