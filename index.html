@@ -1,273 +1,80 @@
 <!DOCTYPE html>
-
 <html lang="it">
 <head>
-  <link rel="stylesheet" href="compact_style.css">
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Hss Team – Home</title>
-<style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: sans-serif; background: #f9f9f9; }
-header {
-  background: #333;
-  color: white;
-  padding: 15px 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-}
-header a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-header a:hover {
-  text-decoration: underline;
-}
-main {
-  max-width: 600px;
-  margin: 30px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
-}
-h2 { text-align: center; }
-label { display: block; margin-top: 15px; font-weight: bold; }
-input, select, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-textarea { resize: vertical; min-height: 80px; }
-button {
-  margin-top: 10px;
-  padding: 8px 14px;
-  font-size: 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-button.modifica { background-color: #1976d2; color: white; }
-button.fatto { background-color: #555; color: white; }
-button.elimina { background-color: #b00020; color: white; }
-.task-item {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f4f4f4;
-  border-radius: 10px;
-}
-.task-buttons {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.completato b {
-  text-decoration: line-through;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HSS Team</title>
+  <style>
+    body { font-family: sans-serif; background-color: #f5f5dc; margin: 0; padding: 1em; }
+    h1 { font-size: 1.5em; margin-bottom: 0.5em; }
+    .task { background: #fff; padding: 0.8em; margin: 0.5em 0; border: 1px solid #ccc; border-radius: 8px; }
+    .task button { margin-left: 0.5em; }
+    select { margin-bottom: 1em; }
+  </style>
 </head>
 <body>
-<header>
-<a href="index.html">🏠 Home</a>
-<a href="utente_mary.html">Mary</a>
-<a href="utente_giovanni.html">Giovanni</a>
-<a href="utente_peppe.html">Peppe</a>
-<a href="utente_cristina.html">Cristina</a>
-<a href="utente_edoardo.html">Edoardo</a>
-<a href="utente_manutentore.html">Manutentore</a>
-<a href="utente_vittoria.html">Vittoria</a>
-<a href="spesa_mafalda.html">🛒 Mafalda</a>
-<a href="spesa_vittoria.html">🛒 Vittoria</a>
-<a href="archivio.html">📁 Archivio</a>
-</header>
-<main>
-<h2>Nuovo Task</h2>
-<form id="taskForm">
-<label for="titolo">Titolo</label>
-<input id="titolo" required="" type="text"/>
-<label for="assegnato">Assegnato a</label>
-<select id="assegnato" required="">
-<option value="Mary">Mary</option><option value="Giovanni">Giovanni</option><option value="Peppe">Peppe</option><option value="Cristina">Cristina</option><option value="Edoardo">Edoardo</option><option value="Manutentore">Manutentore</option><option value="Vittoria">Vittoria</option>
-</select>
-<label for="data">Data</label>
-<input id="data" required="" type="date"/>
-<label for="note">Note</label>
-<textarea id="note" placeholder="Scrivi eventuali note..."></textarea>
-<button type="submit">Salva Task</button>
-</form>
-<div id="orderSelector" style="margin-top: 20px; display: flex; justify-content: flex-start; gap: 10px;">
-<label for="sortOrder"><strong>Ordina per data:</strong></label>
-<select id="sortOrder" onchange="salvaOrdine()">
-<option value="asc">Dal più vecchio</option>
-<option value="desc">Dal più recente</option>
-</select>
-</div>
-<div id="taskList"></div>
-</main>
+  <h1>HSS Team – Task</h1>
+  <select id="sortOrder">
+    <option value="asc">Ordine cronologico (dal più vecchio)</option>
+    <option value="desc">Ordine cronologico (dal più recente)</option>
+  </select>
+  <form id="taskForm">
+    <input type="text" id="taskTitle" placeholder="Nuovo task" required />
+    <input type="date" id="taskDate" required />
+    <button type="submit">Salva</button>
+  </form>
+  <div id="taskList"></div>
+  <script>
+    const taskListEl = document.getElementById('taskList');
+    const taskForm = document.getElementById('taskForm');
+    const sortOrderSelect = document.getElementById('sortOrder');
 
-<style>
-  .task-box {
-    background: #fff;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 15px 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .task-box.done {
-    opacity: 0.5;
-    text-decoration: line-through;
-  }
-  .task-content > div {
-    margin-bottom: 5px;
-  }
-  .task-buttons {
-    display: flex;
-    gap: 10px;
-  }
-  .task-buttons button {
-    background: #eee;
-    border: none;
-    padding: 6px 10px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 6px;
-  }
-  .task-buttons button:hover {
-    background: #ddd;
-  }
-</style>
+    let tasks = JSON.parse(localStorage.getItem('tasks') || "[]");
 
-<script>
-  function salvaOrdine() {
-    const ordine = document.getElementById("sortOrder").value;
-    localStorage.setItem("ordineTask", ordine);
-    location.reload();
-  }
-
-  function getOrdine() {
-    return localStorage.getItem("ordineTask") || "asc";
-  }
-
-  function caricaTaskOrdinati() {
-    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    const ordine = getOrdine();
-    tasks.sort((a, b) => {
-      return ordine === "asc"
-        ? new Date(a.data) - new Date(b.data)
-        : new Date(b.data) - new Date(a.data);
-    });
-    if (document.getElementById("sortOrder")) {
-      document.getElementById("sortOrder").value = ordine;
-    }
-    return tasks;
-  }
-
-  function salvaTasks(tasks) {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }
-
-  function mostraTask() {
-    const tasks = caricaTaskOrdinati();
-    const container = document.getElementById("taskList");
-    if (!container) return;
-    container.innerHTML = "";
-
-    const paginaArchivio = window.location.href.includes("archivio");
-
-    tasks.forEach((task, index) => {
-      const visibile = paginaArchivio ? task.archiviato : !task.archiviato;
-
-      if (!visibile) return;
-
-      const div = document.createElement("div");
-      div.className = "task-box" + (task.archiviato ? " done" : "");
-      div.innerHTML = `
-        <div class="task-content">
-          <div><strong>🗓 ${task.data}</strong></div>
-          <div><strong>🔧 ${task.titolo}</strong></div>
-          <div>📝 ${task.note || "Nessuna nota"}</div>
-          <div>👤 Assegnato a: ${task.assegnato}</div>
-        </div>
-        <div class="task-buttons">
-          ${paginaArchivio
-            ? `<button onclick="ripristinaTask(${index})">↩️</button>
-               <button onclick="eliminaDefinitivo(${index})">🗑️</button>`
-            : `<button onclick="modificaTask(${index})">✏️</button>
-               <button onclick="archiviaTask(${index})">✅</button>`}
-        </div>
-      `;
-      container.appendChild(div);
-    });
-  }
-
-  function archiviaTask(index) {
-    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    tasks[index].archiviato = true;
-    salvaTasks(tasks);
-    mostraTask();
-  }
-
-  function ripristinaTask(index) {
-    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    tasks[index].archiviato = false;
-    salvaTasks(tasks);
-    mostraTask();
-  }
-
-  function eliminaDefinitivo(index) {
-    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    tasks.splice(index, 1);
-    salvaTasks(tasks);
-    mostraTask();
-  }
-
-  function modificaTask(index) {
-    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    const task = tasks[index];
-    document.getElementById("titolo").value = task.titolo;
-    document.getElementById("assegnato").value = task.assegnato;
-    document.getElementById("data").value = task.data;
-    document.getElementById("note").value = task.note;
-    localStorage.setItem("modificaTaskIndex", index);
-  }
-
-  function salvaTask(e) {
-    e.preventDefault();
-    const titolo = document.getElementById("titolo").value;
-    const assegnato = document.getElementById("assegnato").value;
-    const data = document.getElementById("data").value;
-    const note = document.getElementById("note").value;
-    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-
-    const indexModifica = localStorage.getItem("modificaTaskIndex");
-    if (indexModifica !== null) {
-      tasks[indexModifica] = { titolo, assegnato, data, note, archiviato: false };
-      localStorage.removeItem("modificaTaskIndex");
-    } else {
-      tasks.push({ titolo, assegnato, data, note, archiviato: false });
+    function saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
-    salvaTasks(tasks);
-    document.getElementById("taskForm").reset();
-    mostraTask();
-  }
+    function renderTasks() {
+      let sortedTasks = [...tasks];
+      const sortOrder = sortOrderSelect.value;
+      sortedTasks.sort((a, b) => {
+        const da = new Date(a.date);
+        const db = new Date(b.date);
+        return sortOrder === "asc" ? da - db : db - da;
+      });
 
-  document.addEventListener("DOMContentLoaded", () => {
-    mostraTask();
-    const form = document.getElementById("taskForm");
-    if (form) form.addEventListener("submit", salvaTask);
-  });
-</script>
+      taskListEl.innerHTML = '';
+      sortedTasks.forEach((task, index) => {
+        const div = document.createElement('div');
+        div.className = 'task';
+        div.innerHTML = `
+          <strong>${task.date}</strong> - ${task.title}
+          <button onclick="deleteTask(${index})">Elimina</button>
+        `;
+        taskListEl.appendChild(div);
+      });
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    }
+
+    taskForm.onsubmit = (e) => {
+      e.preventDefault();
+      const title = document.getElementById('taskTitle').value;
+      const date = document.getElementById('taskDate').value;
+      tasks.push({ title, date });
+      saveTasks();
+      renderTasks();
+      taskForm.reset();
+    };
+
+    sortOrderSelect.onchange = renderTasks;
+
+    renderTasks();
+  </script>
 </body>
 </html>
